@@ -1,4 +1,5 @@
 #include "glwrapper.hpp"
+#include "application.hpp"
 
 constexpr int width = 800;
 constexpr int height = 600;
@@ -8,38 +9,23 @@ int main()
 {
     spdlog::set_level(spdlog::level::debug);
 
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    GLFWwindow *glfw_window = glfwCreateWindow(width, height, title, nullptr, nullptr);
-    glfwMakeContextCurrent(glfw_window);
-
-    glfwSetFramebufferSizeCallback(glfw_window, [](GLFWwindow *window, int width, int height) {
+    auto app = Application::Instance();
+    app->Init(width, height, title);
+    app->SetOnResize([](int width, int height) {
         GL_CALL(glViewport(0, 0, width, height));
+        SPDLOG_INFO("resize");
     });
-
-    glfwSetKeyCallback(glfw_window, [](GLFWwindow *window, int key, int scancode, int action, int mods) {
+    app->SetOnKeyboard([](int key, int action, int mods) {
+        SPDLOG_INFO("{}", key);
     });
-
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        SPDLOG_ERROR("gladLoadGLLoader failed");
-        return -1;
-    }
 
     GL_CALL(glViewport(0, 0, width, height));
     GL_CALL(glClearColor(0.0f, 0.8f, 0.8f, 1.0f));
 
-    while (!glfwWindowShouldClose(glfw_window))
+    while (app->Update())
     {
-        glfwPollEvents();
-
         GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
-
-        glfwSwapBuffers(glfw_window);
     }
 
-    glfwTerminate();
+    app->Destroy();
 }
