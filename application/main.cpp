@@ -48,6 +48,7 @@ void render()
 {
     GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
     shader.Use();
+    shader.SetUniform("time", (float)glfwGetTime());
     GL_CALL(glBindVertexArray(vao));
     GL_CALL(glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0));
     GL_CALL(glBindVertexArray(GL_NONE));
