@@ -14,14 +14,14 @@ const std::unordered_map<GLenum, error_message> error_map{
     {GL_OUT_OF_MEMORY, {"out of memory"}},
 };
 
-void gl_check_error()
+void gl_check_error(const char *file, const char *func, int line)
 {
     auto code = glGetError();
     if (code == GL_NO_ERROR)
         return;
 
     if (error_map.contains(code))
-        SPDLOG_ERROR("gl call failed: {}({:#x})", error_map.at(code).string, code);
+        SPDLOG_ERROR("gl call at ({}:{} {}()) failed: {}({:#x})", file, line, func, error_map.at(code).string, code);
     else
         SPDLOG_ERROR("gl call failed, unknown error {:#x}", code);
     assert(code == GL_NO_ERROR);
