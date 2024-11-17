@@ -16,6 +16,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/../engine"
     "${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/glad/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/glfw/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/glm/include"
 )
 
 target_link_directories(${PROJECT_NAME} PRIVATE
