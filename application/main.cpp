@@ -1,4 +1,4 @@
-#include "glwrapper.hpp"
+#include "wrapper.hpp"
 #include "application.hpp"
 
 constexpr int width = 800;

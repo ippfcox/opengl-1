@@ -1,6 +1,6 @@
 #include <unordered_map>
 #include "assert.h"
-#include "glwrapper.hpp"
+#include "wrapper.hpp"
 
 struct error_message
 {
