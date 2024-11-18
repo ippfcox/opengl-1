@@ -1,8 +1,7 @@
 #include "application.hpp"
 #include "shader.hpp"
+#include "texture.hpp"
 #include "wrapper.hpp"
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb/stb_image.h"
 
 constexpr int width = 800;
 constexpr int height = 600;
@@ -10,7 +9,7 @@ constexpr char title[] = "hy";
 
 GLuint vao;
 Shader shader;
-GLuint texture;
+Texture texture_cloud, texture_sky, texture_noise;
 
 void prepare_vao()
 {
@@ -18,9 +17,10 @@ void prepare_vao()
     float vertices[] = {
         -0.5f, -0.5f, +0.0f, +1.0f, +0.0f, +0.0f, +0.0f, +0.0f,
         +0.5f, -0.5f, +0.0f, +0.0f, +1.0f, +0.0f, +1.0f, +0.0f,
-        +0.0f, +0.5f, +0.0f, +0.0f, +0.0f, +1.0f, 0.5f, 1.0f};
+        +0.5f, +0.5f, +0.0f, +0.0f, +0.0f, +1.0f, 1.0f, 1.0f,
+        -0.5f, +0.5f, +0.0f, +0.0f, +0.0f, +1.0f, 0.0f, 1.0f};
 
-    unsigned int indices[] = {0, 1, 2};
+    unsigned int indices[] = {0, 1, 2, 0, 2, 3};
 
     GLuint vbo;
     GL_CALL(glGenBuffers(1, &vbo));
@@ -52,30 +52,24 @@ void prepare_shader()
 
 void prepare_texture()
 {
-    int width, height, channels;
-    stbi_uc *data = stbi_load("assets/textures/lena_848x448.jpg", &width, &height, &channels, STBI_rgb_alpha);
-    SPDLOG_INFO("{}x{}", width, height);
-
-    GL_CALL(glGenTextures(1, &texture));
-    GL_CALL(glActiveTexture(GL_TEXTURE0));
-    GL_CALL(glBindTexture(GL_TEXTURE_2D, texture));
-    GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data));
-    GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-    GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-    GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
-    GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
-
-    stbi_image_free(data);
+    texture_cloud.InitByFilename("assets/textures/cloud.jpg");
+    texture_cloud.Bind(0);
+    texture_sky.InitByFilename("assets/textures/sky.jpg");
+    texture_sky.Bind(1);
+    texture_noise.InitByFilename("assets/textures/noise.jpg");
+    texture_noise.Bind(2);
 }
 
 void render()
 {
     GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
     shader.Use();
-    shader.SetUniform("tex", 0);
+    shader.SetUniform("texture_cloud", 0);
+    shader.SetUniform("texture_sky", 1);
+    shader.SetUniform("texture_noise", 2);
     shader.SetUniform("time", (float)glfwGetTime());
     GL_CALL(glBindVertexArray(vao));
-    GL_CALL(glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0));
+    GL_CALL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
     GL_CALL(glBindVertexArray(GL_NONE));
     shader.End();
 }
