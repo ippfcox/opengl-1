@@ -62,12 +62,15 @@ void prepare_texture()
 
 void render()
 {
+    glm::mat4 transform = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
     GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
     shader.Use();
     shader.SetUniform("texture_cloud", 0);
     shader.SetUniform("texture_sky", 1);
     shader.SetUniform("texture_noise", 2);
     shader.SetUniform("time", (float)glfwGetTime());
+    shader.SetUniform("transform", transform);
     GL_CALL(glBindVertexArray(vao));
     GL_CALL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
     GL_CALL(glBindVertexArray(GL_NONE));
