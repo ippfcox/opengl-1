@@ -90,6 +90,12 @@ int main()
     app->SetOnKeyboard([](int key, int action, int mods) {
         SPDLOG_INFO("{}", key);
     });
+    app->SetOnMouse([](int button, int action, int mods) {
+        SPDLOG_INFO("{}: {}", button, action);
+    });
+    app->SetOnCursor([](double xpos, double ypos){
+        SPDLOG_INFO("{}, {}", xpos, ypos);
+    });
 
     prepare_vao();
     prepare_shader();

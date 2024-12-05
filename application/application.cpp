@@ -47,12 +47,56 @@ bool Application::SetOnKeyboard(OnKeyboardCallback on_keyboard)
 
     glfwSetKeyCallback(glfw_window_, [](GLFWwindow *window, int key, int scancode, int action, int mods) {
         auto *self = (Application *)glfwGetWindowUserPointer(window);
-        if (!self || !self->on_resize_)
+        if (!self || !self->on_keyboard_)
         {
             return;
         }
 
         self->on_keyboard_(key, action, mods);
+    });
+
+    return true;
+}
+
+bool Application::SetOnMouse(OnMouseCallback on_mouse)
+{
+    if (!glfw_window_)
+    {
+        return false;
+    }
+
+    on_mouse_ = on_mouse;
+
+    glfwSetMouseButtonCallback(glfw_window_, [](GLFWwindow *window, int button, int action, int mods) {
+        auto *self = (Application *)glfwGetWindowUserPointer(window);
+        if (!self || !self->on_mouse_)
+        {
+            return;
+        }
+
+        self->on_mouse_(button, action, mods);
+    });
+
+    return true;
+}
+
+bool Application::SetOnCursor(OnCursorCallback on_cursor)
+{
+    if (!glfw_window_)
+    {
+        return false;
+    }
+
+    on_cursor_ = on_cursor;
+
+    glfwSetCursorPosCallback(glfw_window_, [](GLFWwindow *window, double xpos, double ypos) {
+        auto *self = (Application *)glfwGetWindowUserPointer(window);
+        if (!self || !self->on_cursor_)
+        {
+            return;
+        }
+
+        self->on_cursor_(xpos, ypos);
     });
 
     return true;

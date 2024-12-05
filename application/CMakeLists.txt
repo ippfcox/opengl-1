@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.13)
 project(test-1)
 
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}" SRC)
+aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/camera" SRC)
 
 add_executable(${PROJECT_NAME} ${SRC})
 

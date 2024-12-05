@@ -7,6 +7,8 @@ class Application
 public:
     using OnResizeCallback = std::function<void(int width, int height)>;
     using OnKeyboardCallback = std::function<void(int key, int action, int modes)>;
+    using OnMouseCallback = std::function<void(int button, int action, int mods)>;
+    using OnCursorCallback = std::function<void(double xpos, double ypos)>;
 
     ~Application();
     static Application *Instance();
@@ -16,6 +18,8 @@ public:
 
     bool SetOnResize(OnResizeCallback on_resize);
     bool SetOnKeyboard(OnKeyboardCallback on_keyboard);
+    bool SetOnMouse(OnMouseCallback on_mouse);
+    bool SetOnCursor(OnCursorCallback on_cursor);
 
     int Width() const;
     int Height() const;
@@ -30,4 +34,6 @@ private:
     GLFWwindow *glfw_window_;
     OnResizeCallback on_resize_;
     OnKeyboardCallback on_keyboard_;
+    OnMouseCallback on_mouse_;
+    OnCursorCallback on_cursor_;
 };
