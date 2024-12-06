@@ -1,6 +1,9 @@
 #include "application.hpp"
 #include "shader.hpp"
 #include "texture.hpp"
+#include "camera/orthographic_camera.hpp"
+#include "camera/perspective_camera.hpp"
+#include "camera/trackball_camera_control.hpp"
 #include "wrapper.hpp"
 
 constexpr int width = 800;
@@ -10,6 +13,9 @@ constexpr char title[] = "hy";
 GLuint vao;
 Shader shader;
 Texture texture_cloud, texture_sky, texture_noise;
+
+Camera *camera = nullptr;
+CameraControl *camera_control = nullptr;
 
 void prepare_vao()
 {
@@ -60,17 +66,26 @@ void prepare_texture()
     texture_noise.Bind(2);
 }
 
+void prepare_camera()
+{
+    camera = new PerspectiveCamera(60.0f, (float)width / height, 0.1f, 1000.0f);
+    camera_control = new TrackballCameraControl();
+    camera_control->SetCamera(camera);
+}
+
 void render()
 {
-    glm::mat4 transform = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    // glm::mat4 transform = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    auto transform = glm::mat4(1.0f);
 
     GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
     shader.Use();
-    shader.SetUniform("texture_cloud", 0);
-    shader.SetUniform("texture_sky", 1);
-    shader.SetUniform("texture_noise", 2);
-    shader.SetUniform("time", (float)glfwGetTime());
-    shader.SetUniform("transform", transform);
+    shader.SetUniform("unif_texture_cloud", 0);
+    shader.SetUniform("unif_texture_sky", 1);
+    shader.SetUniform("unif_texture_noise", 2);
+    shader.SetUniform("unif_model", transform);
+    shader.SetUniform("unif_view", camera->GetViewMatrix());
+    shader.SetUniform("unif_projection", camera->GetProjectionMatrix());
     GL_CALL(glBindVertexArray(vao));
     GL_CALL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
     GL_CALL(glBindVertexArray(GL_NONE));
@@ -83,29 +98,32 @@ int main()
 
     auto app = Application::Instance();
     app->Init(width, height, title);
-    app->SetOnResize([](int width, int height) {
+    app->SetOnResize([&](int width, int height) {
         GL_CALL(glViewport(0, 0, width, height));
-        SPDLOG_INFO("resize");
     });
     app->SetOnKeyboard([](int key, int action, int mods) {
-        SPDLOG_INFO("{}", key);
+        camera_control->OnKeyboard(key, action, mods);
     });
-    app->SetOnMouse([](int button, int action, int mods) {
-        SPDLOG_INFO("{}: {}", button, action);
+    app->SetOnMouse([&](int button, int action, int mods) {
+        double xpos, ypos;
+        app->GetCursorPosition(&xpos, &ypos);
+        camera_control->OnMouse(button, action, xpos, ypos);
     });
-    app->SetOnCursor([](double xpos, double ypos){
-        SPDLOG_INFO("{}, {}", xpos, ypos);
+    app->SetOnCursor([](double xpos, double ypos) {
+        camera_control->OnCursor(xpos, ypos);
     });
 
     prepare_vao();
     prepare_shader();
     prepare_texture();
+    prepare_camera();
 
     GL_CALL(glViewport(0, 0, width, height));
     GL_CALL(glClearColor(0.0f, 0.8f, 0.8f, 1.0f));
 
     while (app->Update())
     {
+        camera_control->Update();
         render();
     }
 

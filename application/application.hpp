@@ -6,7 +6,7 @@ class Application
 {
 public:
     using OnResizeCallback = std::function<void(int width, int height)>;
-    using OnKeyboardCallback = std::function<void(int key, int action, int modes)>;
+    using OnKeyboardCallback = std::function<void(int key, int action, int mods)>;
     using OnMouseCallback = std::function<void(int button, int action, int mods)>;
     using OnCursorCallback = std::function<void(double xpos, double ypos)>;
 
@@ -21,9 +21,10 @@ public:
     bool SetOnMouse(OnMouseCallback on_mouse);
     bool SetOnCursor(OnCursorCallback on_cursor);
 
-    int Width() const;
-    int Height() const;
-    std::string Title() const;
+    std::string GetTitle() const;
+    int GetWidth() const;
+    int GetHeight() const;
+    void GetCursorPosition(double *xpos, double *ypos) const;
 
 private:
     Application();

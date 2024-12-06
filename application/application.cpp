@@ -14,6 +14,46 @@ Application *Application::Instance()
     return &instance;
 }
 
+bool Application::Init(const int &width, const int &height, const std::string &title)
+{
+    width_ = width;
+    height_ = height;
+    title_ = title;
+
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfw_window_ = glfwCreateWindow(width_, height_, title_.c_str(), nullptr, nullptr);
+    glfwMakeContextCurrent(glfw_window_);
+
+    glfwSetWindowUserPointer(glfw_window_, this);
+
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        SPDLOG_ERROR("gladLoadGLLoader failed");
+        return false;
+    }
+
+    return true;
+}
+
+void Application::Destroy()
+{
+    glfwTerminate();
+}
+
+bool Application::Update()
+{
+    if (glfwWindowShouldClose(glfw_window_))
+        return false;
+
+    glfwPollEvents();
+    glfwSwapBuffers(glfw_window_);
+
+    return true;
+}
+
 bool Application::SetOnResize(OnResizeCallback on_resize)
 {
     if (!glfw_window_)
@@ -102,42 +142,22 @@ bool Application::SetOnCursor(OnCursorCallback on_cursor)
     return true;
 }
 
-bool Application::Init(const int &width, const int &height, const std::string &title)
+std::string Application::GetTitle() const
 {
-    width_ = width;
-    height_ = height;
-    title_ = title;
-
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfw_window_ = glfwCreateWindow(width_, height_, title_.c_str(), nullptr, nullptr);
-    glfwMakeContextCurrent(glfw_window_);
-
-    glfwSetWindowUserPointer(glfw_window_, this);
-
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        SPDLOG_ERROR("gladLoadGLLoader failed");
-        return false;
-    }
-
-    return true;
+    return title_;
 }
 
-bool Application::Update()
+int Application::GetWidth() const
 {
-    if (glfwWindowShouldClose(glfw_window_))
-        return false;
-
-    glfwPollEvents();
-    glfwSwapBuffers(glfw_window_);
-
-    return true;
+    return width_;
 }
 
-void Application::Destroy()
+int Application::GetHeight() const
 {
-    glfwTerminate();
+    return height_;
+}
+
+void Application::GetCursorPosition(double *xpos, double *ypos) const
+{
+    glfwGetCursorPos(glfw_window_, xpos, ypos);
 }

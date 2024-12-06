@@ -1,4 +1,4 @@
-#include "PerspectiveCamera.hpp"
+#include "perspective_camera.hpp"
 
 PerspectiveCamera::PerspectiveCamera(float fovy, float aspect, float near, float far)
     : fovy_(fovy), aspect_(aspect), near_(near), far_(far)
