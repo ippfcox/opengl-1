@@ -6,6 +6,7 @@
 #include "camera/trackball_camera_control.hpp"
 #include "camera/game_camera_control.hpp"
 #include "mesh/cube.hpp"
+#include "mesh/sphere.hpp"
 #include "wrapper.hpp"
 
 constexpr int width = 800;
@@ -21,7 +22,8 @@ CameraControl *camera_control = nullptr;
 
 void prepare_vao()
 {
-    mesh = new Cube(5);
+    // mesh = new Cube(5);
+    mesh = new Sphere(5);
 }
 
 void prepare_shader()
@@ -101,6 +103,7 @@ int main()
     GL_CALL(glClearColor(0.0f, 0.8f, 0.8f, 1.0f));
     GL_CALL(glEnable(GL_DEPTH_TEST));
     GL_CALL(glDepthFunc(GL_LESS));
+    // GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
 
     while (app->Update())
     {
