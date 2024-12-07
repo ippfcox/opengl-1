@@ -19,6 +19,7 @@ void GameCameraControl::Update()
 
     auto front = glm::cross(camera_->up, camera_->right);
     auto right = camera_->right;
+    auto up = camera_->up;
 
     if (key_map_[GLFW_KEY_W])
         direction += front;
@@ -28,6 +29,10 @@ void GameCameraControl::Update()
         direction += right;
     if (key_map_[GLFW_KEY_A])
         direction -= right;
+    if (key_map_[GLFW_KEY_SPACE])
+        direction += up;
+    if (key_map_[GLFW_KEY_C])
+        direction -= up;
 
     if (glm::length(direction) > 0)
         direction = glm::normalize(direction);

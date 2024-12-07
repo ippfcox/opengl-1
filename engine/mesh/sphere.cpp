@@ -5,8 +5,8 @@ Sphere::Sphere(float radius)
     std::vector<Vertex> vertices = {};
     std::vector<unsigned int> indices = {};
 
-    int latitude_count = 10;
-    int longtitude_count = 10;
+    int latitude_count = 100;
+    int longtitude_count = 100;
 
     float delta_phi = glm::pi<float>() / latitude_count;
     float delta_theta = 2 * glm::pi<float>() / longtitude_count;
@@ -20,7 +20,7 @@ Sphere::Sphere(float radius)
             float x = radius * std::sin(i * delta_phi) * std::cos(j * delta_theta);
             float y = radius * std::cos(i * delta_phi);
             float z = radius * std::sin(i * delta_phi) * std::sin(j * delta_theta);
-            vertices.push_back(Vertex{glm::vec3{x, y, z}, glm::vec2{j * delta_u, i * delta_v}});
+            vertices.push_back(Vertex{glm::vec3{x, y, z}, glm::vec2{1.0f - j * delta_u, 1.0f - i * delta_v}});
 
             if (i == latitude_count || j == longtitude_count)
                 continue;

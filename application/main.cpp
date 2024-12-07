@@ -15,7 +15,7 @@ constexpr char title[] = "hy";
 
 Mesh *mesh = nullptr;
 Shader shader;
-Texture texture_cloud, texture_sky, texture_noise;
+Texture textuer_earth;
 
 Camera *camera = nullptr;
 CameraControl *camera_control = nullptr;
@@ -33,12 +33,8 @@ void prepare_shader()
 
 void prepare_texture()
 {
-    texture_cloud.InitByFilename("assets/textures/cloud.jpg");
-    texture_cloud.Bind(0);
-    texture_sky.InitByFilename("assets/textures/sky.jpg");
-    texture_sky.Bind(1);
-    texture_noise.InitByFilename("assets/textures/noise.jpg");
-    texture_noise.Bind(2);
+    textuer_earth.InitByFilename("assets/textures/earthmap1k.jpg");
+    textuer_earth.Bind(0);
 }
 
 void prepare_camera()
@@ -48,7 +44,7 @@ void prepare_camera()
     // camera_control = new TrackballCameraControl();
     camera_control = new GameCameraControl();
     camera_control->SetCamera(camera);
-    dynamic_cast<GameCameraControl *>(camera_control)->SetMoveSpeed(0.02f);
+    dynamic_cast<GameCameraControl *>(camera_control)->SetMoveSpeed(0.04f);
 }
 
 void render()
@@ -58,9 +54,7 @@ void render()
 
     GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
     shader.Use();
-    shader.SetUniform("unif_texture_cloud", 0);
-    shader.SetUniform("unif_texture_sky", 1);
-    shader.SetUniform("unif_texture_noise", 2);
+    shader.SetUniform("unif_texture_earth", 0);
     shader.SetUniform("unif_model", transform);
     shader.SetUniform("unif_view", camera->GetViewMatrix());
     shader.SetUniform("unif_projection", camera->GetProjectionMatrix());
