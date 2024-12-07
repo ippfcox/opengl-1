@@ -4,6 +4,7 @@
 #include "camera/orthographic_camera.hpp"
 #include "camera/perspective_camera.hpp"
 #include "camera/trackball_camera_control.hpp"
+#include "camera/game_camera_control.hpp"
 #include "wrapper.hpp"
 
 constexpr int width = 800;
@@ -68,9 +69,10 @@ void prepare_texture()
 
 void prepare_camera()
 {
-    // camera = new PerspectiveCamera(60.0f, (float)width / height, 0.1f, 1000.0f);
-    camera = new OrthographicCamera(-6.0f, 6.0f, -6.0f, 6.0f, -6.0f, 6.0f);
-    camera_control = new TrackballCameraControl();
+    camera = new PerspectiveCamera(60.0f, (float)width / height, 0.1f, 1000.0f);
+    // camera = new OrthographicCamera(-6.0f, 6.0f, -6.0f, 6.0f, -6.0f, 6.0f);
+    // camera_control = new TrackballCameraControl();
+    camera_control = new GameCameraControl();
     camera_control->SetCamera(camera);
 }
 

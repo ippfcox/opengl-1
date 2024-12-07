@@ -58,3 +58,11 @@ void CameraControl::OnMouseButton(int button, int action, double xpos, double yp
         break;
     }
 }
+
+void CameraControl::OnMouseScroll(double yoffset)
+{
+}
+
+void CameraControl::OnMouseCursor(double xpos, double ypos)
+{
+}

@@ -16,8 +16,8 @@ public:
     virtual void Update();
     virtual void OnKeyboard(int key, int action, int mods);
     virtual void OnMouseButton(int button, int action, double xpos, double ypos);
-    virtual void OnMouseScroll(double yoffset) = 0;
-    virtual void OnMouseCursor(double xpos, double ypos) = 0;
+    virtual void OnMouseScroll(double yoffset);
+    virtual void OnMouseCursor(double xpos, double ypos);
 
 protected:
     bool mouse_left_down_ = false;
