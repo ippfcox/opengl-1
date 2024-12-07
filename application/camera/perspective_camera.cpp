@@ -13,3 +13,8 @@ glm::mat4 PerspectiveCamera::GetProjectionMatrix()
 {
     return glm::perspective(glm::radians(fovy_), aspect_, near_, far_);
 }
+
+void PerspectiveCamera::Scale(float scale)
+{
+    position += scale * glm::cross(up, right);
+}

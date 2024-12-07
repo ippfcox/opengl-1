@@ -98,45 +98,67 @@ bool Application::SetOnKeyboard(OnKeyboardCallback on_keyboard)
     return true;
 }
 
-bool Application::SetOnMouse(OnMouseCallback on_mouse)
+bool Application::SetOnMouseScroll(OnMouseScrollCallback on_mouse_scroll)
 {
     if (!glfw_window_)
     {
         return false;
     }
 
-    on_mouse_ = on_mouse;
+    on_mouse_scroll_ = on_mouse_scroll;
 
-    glfwSetMouseButtonCallback(glfw_window_, [](GLFWwindow *window, int button, int action, int mods) {
+    glfwSetScrollCallback(glfw_window_, [](GLFWwindow *window, double xoffset, double yoffset) {
         auto *self = (Application *)glfwGetWindowUserPointer(window);
-        if (!self || !self->on_mouse_)
+        if (!self || !self->on_mouse_button_)
         {
             return;
         }
 
-        self->on_mouse_(button, action, mods);
+        self->on_mouse_scroll_(yoffset);
     });
 
     return true;
 }
 
-bool Application::SetOnCursor(OnCursorCallback on_cursor)
+bool Application::SetOnMouseButton(OnMouseButtonCallback on_mouse_button)
 {
     if (!glfw_window_)
     {
         return false;
     }
 
-    on_cursor_ = on_cursor;
+    on_mouse_button_ = on_mouse_button;
 
-    glfwSetCursorPosCallback(glfw_window_, [](GLFWwindow *window, double xpos, double ypos) {
+    glfwSetMouseButtonCallback(glfw_window_, [](GLFWwindow *window, int button, int action, int mods) {
         auto *self = (Application *)glfwGetWindowUserPointer(window);
-        if (!self || !self->on_cursor_)
+        if (!self || !self->on_mouse_button_)
         {
             return;
         }
 
-        self->on_cursor_(xpos, ypos);
+        self->on_mouse_button_(button, action, mods);
+    });
+
+    return true;
+}
+
+bool Application::SetOnMouseCursor(OnMouseCursorCallback on_mouse_cursor)
+{
+    if (!glfw_window_)
+    {
+        return false;
+    }
+
+    on_mouse_cursor_ = on_mouse_cursor;
+
+    glfwSetCursorPosCallback(glfw_window_, [](GLFWwindow *window, double xpos, double ypos) {
+        auto *self = (Application *)glfwGetWindowUserPointer(window);
+        if (!self || !self->on_mouse_cursor_)
+        {
+            return;
+        }
+
+        self->on_mouse_cursor_(xpos, ypos);
     });
 
     return true;

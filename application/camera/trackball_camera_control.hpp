@@ -8,7 +8,8 @@ public:
     TrackballCameraControl();
     ~TrackballCameraControl();
 
-    void OnCursor(float xpos, float ypos) override;
+    void OnMouseScroll(double yoffseet) override;
+    void OnMouseCursor(double xpos, double ypos) override;
 
 private:
     float move_speed_ = 0.01f;

@@ -8,12 +8,17 @@ TrackballCameraControl::~TrackballCameraControl()
 {
 }
 
-void TrackballCameraControl::OnCursor(float xpos, float ypos)
+void TrackballCameraControl::OnMouseScroll(double yoffset)
+{
+    camera_->Scale(yoffset * scale_speed_);
+}
+
+void TrackballCameraControl::OnMouseCursor(double xpos, double ypos)
 {
     if (mouse_left_down_)
     {
-        auto pitch = (ypos - cursor_current_y_) * sensitivity_;
-        auto yaw = (xpos - cursor_current_x_) * sensitivity_;
+        auto pitch = static_cast<float>((ypos - cursor_current_y_) * sensitivity_);
+        auto yaw = static_cast<float>((xpos - cursor_current_x_) * sensitivity_);
 
         auto pitch_mat = glm::rotate(glm::mat4(1.0f), glm::radians(-pitch), camera_->right);
         camera_->up = pitch_mat * glm::vec4(camera_->up, 0.0f);

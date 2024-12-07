@@ -10,6 +10,8 @@ public:
 
     glm::mat4 GetProjectionMatrix() override;
 
+    void Scale(float scale) override;
+
 private:
     float fovy_ = 0.0f;
     float aspect_ = 0.0f;

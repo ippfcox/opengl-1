@@ -18,6 +18,11 @@ void CameraControl::SetSensitivity(float sensitivity)
     sensitivity_ = sensitivity;
 }
 
+void CameraControl ::SetScaleSpeed(float scale_speed)
+{
+    scale_speed_ = scale_speed;
+}
+
 void CameraControl::Update()
 {
 }
@@ -31,7 +36,7 @@ void CameraControl::OnKeyboard(int key, int action, int mods)
     key_map_[key] = pressed;
 }
 
-void CameraControl::OnMouse(int button, int action, double xpos, double ypos)
+void CameraControl::OnMouseButton(int button, int action, double xpos, double ypos)
 {
     bool pressed = action == GLFW_PRESS;
     if (pressed)

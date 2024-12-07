@@ -10,6 +10,8 @@ public:
 
     glm::mat4 GetProjectionMatrix() override;
 
+    void Scale(float scale) override;
+
 private:
     float left_ = 0.0f;
     float right_ = 0.0f;
@@ -17,4 +19,5 @@ private:
     float top_ = 0.0f;
     float near_ = 0.0f;
     float far_ = 0.0f;
+    float scale_ = 0.0f;
 };

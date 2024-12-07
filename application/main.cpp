@@ -68,7 +68,8 @@ void prepare_texture()
 
 void prepare_camera()
 {
-    camera = new PerspectiveCamera(60.0f, (float)width / height, 0.1f, 1000.0f);
+    // camera = new PerspectiveCamera(60.0f, (float)width / height, 0.1f, 1000.0f);
+    camera = new OrthographicCamera(-6.0f, 6.0f, -6.0f, 6.0f, -6.0f, 6.0f);
     camera_control = new TrackballCameraControl();
     camera_control->SetCamera(camera);
 }
@@ -104,13 +105,16 @@ int main()
     app->SetOnKeyboard([](int key, int action, int mods) {
         camera_control->OnKeyboard(key, action, mods);
     });
-    app->SetOnMouse([&](int button, int action, int mods) {
+    app->SetOnMouseButton([&](int button, int action, int mods) {
         double xpos, ypos;
         app->GetCursorPosition(&xpos, &ypos);
-        camera_control->OnMouse(button, action, xpos, ypos);
+        camera_control->OnMouseButton(button, action, xpos, ypos);
     });
-    app->SetOnCursor([](double xpos, double ypos) {
-        camera_control->OnCursor(xpos, ypos);
+    app->SetOnMouseScroll([&](double yoffset) {
+        camera_control->OnMouseScroll(yoffset);
+    });
+    app->SetOnMouseCursor([](double xpos, double ypos) {
+        camera_control->OnMouseCursor(xpos, ypos);
     });
 
     prepare_vao();

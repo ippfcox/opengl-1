@@ -7,8 +7,9 @@ class Application
 public:
     using OnResizeCallback = std::function<void(int width, int height)>;
     using OnKeyboardCallback = std::function<void(int key, int action, int mods)>;
-    using OnMouseCallback = std::function<void(int button, int action, int mods)>;
-    using OnCursorCallback = std::function<void(double xpos, double ypos)>;
+    using OnMouseButtonCallback = std::function<void(int button, int action, int mods)>;
+    using OnMouseScrollCallback = std::function<void(double yoffset)>;
+    using OnMouseCursorCallback = std::function<void(double xpos, double ypos)>;
 
     ~Application();
     static Application *Instance();
@@ -18,8 +19,9 @@ public:
 
     bool SetOnResize(OnResizeCallback on_resize);
     bool SetOnKeyboard(OnKeyboardCallback on_keyboard);
-    bool SetOnMouse(OnMouseCallback on_mouse);
-    bool SetOnCursor(OnCursorCallback on_cursor);
+    bool SetOnMouseButton(OnMouseButtonCallback on_mouse_button);
+    bool SetOnMouseScroll(OnMouseScrollCallback on_mouse_scroll);
+    bool SetOnMouseCursor(OnMouseCursorCallback on_mouse_cursor);
 
     std::string GetTitle() const;
     int GetWidth() const;
@@ -35,6 +37,7 @@ private:
     GLFWwindow *glfw_window_;
     OnResizeCallback on_resize_;
     OnKeyboardCallback on_keyboard_;
-    OnMouseCallback on_mouse_;
-    OnCursorCallback on_cursor_;
+    OnMouseButtonCallback on_mouse_button_;
+    OnMouseScrollCallback on_mouse_scroll_;
+    OnMouseCursorCallback on_mouse_cursor_;
 };

@@ -11,5 +11,11 @@ OrthographicCamera::~OrthographicCamera()
 
 glm::mat4 OrthographicCamera::GetProjectionMatrix()
 {
-    return glm::ortho(left_, right_, bottom_, top_, near_, far_);
+    float scale = std::pow(2.0f, scale_);
+    return glm::ortho(left_ * scale_, right_ * scale_, bottom_ * scale_, top_ * scale_, near_, far_);
+}
+
+void OrthographicCamera::Scale(float scale)
+{
+    scale_ += scale;
 }
