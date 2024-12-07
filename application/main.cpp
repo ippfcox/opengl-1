@@ -5,13 +5,14 @@
 #include "camera/perspective_camera.hpp"
 #include "camera/trackball_camera_control.hpp"
 #include "camera/game_camera_control.hpp"
+#include "mesh/cube.hpp"
 #include "wrapper.hpp"
 
 constexpr int width = 800;
 constexpr int height = 600;
 constexpr char title[] = "hy";
 
-GLuint vao;
+Mesh *mesh = nullptr;
 Shader shader;
 Texture texture_cloud, texture_sky, texture_noise;
 
@@ -20,36 +21,7 @@ CameraControl *camera_control = nullptr;
 
 void prepare_vao()
 {
-    // x, y, z, r, g, b, u, v
-    float vertices[] = {
-        -0.5f, -0.5f, +0.0f, +1.0f, +0.0f, +0.0f, +0.0f, +0.0f,
-        +0.5f, -0.5f, +0.0f, +0.0f, +1.0f, +0.0f, +1.0f, +0.0f,
-        +0.5f, +0.5f, +0.0f, +0.0f, +0.0f, +1.0f, 1.0f, 1.0f,
-        -0.5f, +0.5f, +0.0f, +0.0f, +0.0f, +1.0f, 0.0f, 1.0f};
-
-    unsigned int indices[] = {0, 1, 2, 0, 2, 3};
-
-    GLuint vbo;
-    GL_CALL(glGenBuffers(1, &vbo));
-    GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, vbo));
-    GL_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
-
-    GLuint ebo;
-    GL_CALL(glGenBuffers(1, &ebo));
-    GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
-    GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW));
-
-    GL_CALL(glGenVertexArrays(1, &vao));
-    GL_CALL(glBindVertexArray(vao));
-    GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, vbo));
-    GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
-    GL_CALL(glEnableVertexAttribArray(0));
-    GL_CALL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0));
-    GL_CALL(glEnableVertexAttribArray(1));
-    GL_CALL(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float))));
-    GL_CALL(glEnableVertexAttribArray(2));
-    GL_CALL(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float))));
-    GL_CALL(glBindVertexArray(GL_NONE));
+    mesh = new Cube(5);
 }
 
 void prepare_shader()
@@ -74,6 +46,7 @@ void prepare_camera()
     // camera_control = new TrackballCameraControl();
     camera_control = new GameCameraControl();
     camera_control->SetCamera(camera);
+    dynamic_cast<GameCameraControl *>(camera_control)->SetMoveSpeed(0.02f);
 }
 
 void render()
@@ -81,7 +54,7 @@ void render()
     // glm::mat4 transform = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     auto transform = glm::mat4(1.0f);
 
-    GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
+    GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
     shader.Use();
     shader.SetUniform("unif_texture_cloud", 0);
     shader.SetUniform("unif_texture_sky", 1);
@@ -89,8 +62,8 @@ void render()
     shader.SetUniform("unif_model", transform);
     shader.SetUniform("unif_view", camera->GetViewMatrix());
     shader.SetUniform("unif_projection", camera->GetProjectionMatrix());
-    GL_CALL(glBindVertexArray(vao));
-    GL_CALL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
+    GL_CALL(glBindVertexArray(mesh->GetVAO()));
+    GL_CALL(glDrawElements(GL_TRIANGLES, mesh->GetIndicesCount(), GL_UNSIGNED_INT, 0));
     GL_CALL(glBindVertexArray(GL_NONE));
     shader.End();
 }
@@ -126,6 +99,8 @@ int main()
 
     GL_CALL(glViewport(0, 0, width, height));
     GL_CALL(glClearColor(0.0f, 0.8f, 0.8f, 1.0f));
+    GL_CALL(glEnable(GL_DEPTH_TEST));
+    GL_CALL(glDepthFunc(GL_LESS));
 
     while (app->Update())
     {

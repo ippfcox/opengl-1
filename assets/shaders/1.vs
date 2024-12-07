@@ -1,8 +1,7 @@
 #version 460 core
 
 layout (location = 0) in vec3 attr_position;
-layout (location = 1) in vec3 attr_color;
-layout (location = 2) in vec2 attr_uv;
+layout (location = 1) in vec2 attr_uv;
 
 uniform mat4 unif_model;
 uniform mat4 unif_view;
