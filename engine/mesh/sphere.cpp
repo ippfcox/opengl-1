@@ -20,7 +20,7 @@ Sphere::Sphere(float radius)
             float x = radius * std::sin(i * delta_phi) * std::cos(j * delta_theta);
             float y = radius * std::cos(i * delta_phi);
             float z = radius * std::sin(i * delta_phi) * std::sin(j * delta_theta);
-            vertices.push_back(Vertex{glm::vec3{x, y, z}, glm::vec2{1.0f - j * delta_u, 1.0f - i * delta_v}});
+            vertices.push_back(Vertex{glm::vec3{x, y, z}, glm::vec2{1.0f - j * delta_u, 1.0f - i * delta_v}, glm::vec3{x, y, z}});
 
             if (i == latitude_count || j == longtitude_count)
                 continue;

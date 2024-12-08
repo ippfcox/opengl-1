@@ -7,6 +7,7 @@
 #include "camera/game_camera_control.hpp"
 #include "mesh/cube.hpp"
 #include "mesh/sphere.hpp"
+#include "mesh/plane.hpp"
 #include "wrapper.hpp"
 
 constexpr int width = 800;
@@ -23,7 +24,8 @@ CameraControl *camera_control = nullptr;
 void prepare_vao()
 {
     // mesh = new Cube(5);
-    mesh = new Sphere(5);
+    mesh = new Sphere(2.0);
+    // mesh = new Plane(2, 3);
 }
 
 void prepare_shader()
