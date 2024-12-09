@@ -14,6 +14,9 @@ constexpr int width = 800;
 constexpr int height = 600;
 constexpr char title[] = "hy";
 
+glm::vec3 diffuse_light_direction{-1.0f, -2.0f, -3.0f};
+glm::vec3 diffuse_light_color{0.7f, 0.6, 0.0f};
+
 Mesh *mesh = nullptr;
 Shader shader;
 Texture textuer_earth;
@@ -60,6 +63,8 @@ void render()
     shader.SetUniform("unif_model", transform);
     shader.SetUniform("unif_view", camera->GetViewMatrix());
     shader.SetUniform("unif_projection", camera->GetProjectionMatrix());
+    shader.SetUniform("unif_diffuse_light_direction", diffuse_light_direction);
+    shader.SetUniform("unif_diffuse_light_color", diffuse_light_color);
     GL_CALL(glBindVertexArray(mesh->GetVAO()));
     GL_CALL(glDrawElements(GL_TRIANGLES, mesh->GetIndicesCount(), GL_UNSIGNED_INT, 0));
     GL_CALL(glBindVertexArray(GL_NONE));
