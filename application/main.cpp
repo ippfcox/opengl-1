@@ -10,12 +10,13 @@
 #include "mesh/plane.hpp"
 #include "wrapper.hpp"
 
-constexpr int width = 800;
-constexpr int height = 600;
+constexpr int width = 80;
+constexpr int height = 60;
 constexpr char title[] = "hy";
 
-glm::vec3 diffuse_light_direction{-1.0f, -2.0f, -3.0f};
+glm::vec3 diffuse_light_direction{-1.0f, -0.3f, -3.0f};
 glm::vec3 diffuse_light_color{0.7f, 0.6, 0.0f};
+float specular_intensity = 2.0f;
 
 Mesh *mesh = nullptr;
 Shader shader;
@@ -26,8 +27,8 @@ CameraControl *camera_control = nullptr;
 
 void prepare_vao()
 {
-    // mesh = new Cube(5);
-    mesh = new Sphere(2.0);
+    mesh = new Cube(10);
+    // mesh = new Sphere(2.0);
     // mesh = new Plane(2, 3);
 }
 
@@ -49,7 +50,7 @@ void prepare_camera()
     // camera_control = new TrackballCameraControl();
     camera_control = new GameCameraControl();
     camera_control->SetCamera(camera);
-    dynamic_cast<GameCameraControl *>(camera_control)->SetMoveSpeed(0.04f);
+    dynamic_cast<GameCameraControl *>(camera_control)->SetMoveSpeed(0.02f);
 }
 
 void render()
@@ -63,8 +64,10 @@ void render()
     shader.SetUniform("unif_model", transform);
     shader.SetUniform("unif_view", camera->GetViewMatrix());
     shader.SetUniform("unif_projection", camera->GetProjectionMatrix());
-    shader.SetUniform("unif_diffuse_light_direction", diffuse_light_direction);
-    shader.SetUniform("unif_diffuse_light_color", diffuse_light_color);
+    shader.SetUniform("unif_light_direction", diffuse_light_direction);
+    shader.SetUniform("unif_light_color", diffuse_light_color);
+    shader.SetUniform("unif_specular_intensity", specular_intensity);
+    shader.SetUniform("unif_camera_position", camera->position);
     GL_CALL(glBindVertexArray(mesh->GetVAO()));
     GL_CALL(glDrawElements(GL_TRIANGLES, mesh->GetIndicesCount(), GL_UNSIGNED_INT, 0));
     GL_CALL(glBindVertexArray(GL_NONE));
@@ -101,7 +104,7 @@ int main()
     prepare_camera();
 
     GL_CALL(glViewport(0, 0, width, height));
-    GL_CALL(glClearColor(0.0f, 0.8f, 0.8f, 1.0f));
+    GL_CALL(glClearColor(0.3f, 0.3f, 0.3f, 1.0f));
     GL_CALL(glEnable(GL_DEPTH_TEST));
     GL_CALL(glDepthFunc(GL_LESS));
     // GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
