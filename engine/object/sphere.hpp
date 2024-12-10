@@ -1,6 +1,6 @@
-#include "mesh.hpp"
+#include "geometry.hpp"
 
-class Sphere : public Mesh
+class Sphere : public Geometry
 {
 public:
     Sphere(float radius);

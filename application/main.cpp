@@ -5,22 +5,22 @@
 #include "camera/perspective_camera.hpp"
 #include "camera/trackball_camera_control.hpp"
 #include "camera/game_camera_control.hpp"
-#include "mesh/cube.hpp"
-#include "mesh/sphere.hpp"
-#include "mesh/plane.hpp"
+#include "object/object.hpp"
+#include "object/mesh.hpp"
+#include "object/sphere.hpp"
+#include "object/material/phong_material.hpp"
 #include "wrapper.hpp"
 
-constexpr int width = 80;
-constexpr int height = 60;
+constexpr int width = 800;
+constexpr int height = 600;
 constexpr char title[] = "hy";
 
 glm::vec3 light_direction{-1.0f, -0.3f, -3.0f};
 glm::vec3 light_color{0.7f, 0.6, 0.0f};
 float specular_intensity = 1.5f;
-int specular_exponent = 64;
 glm::vec3 ambient_color{0.2f, 0.2f, 0.2f};
 
-glm::mat4 transform(0.1f);
+glm::mat4 transform(1.0f);
 
 Mesh *mesh = nullptr;
 Shader shader;
@@ -29,22 +29,22 @@ Texture textuer_earth;
 Camera *camera = nullptr;
 CameraControl *camera_control = nullptr;
 
-void prepare_vao()
+void prepare()
 {
-    // mesh = new Cube(10);
-    mesh = new Sphere(5.0);
-    // mesh = new Plane(2, 3);
+    auto geo = new Sphere(1.0f);
+
+    auto material = new PhongMaterial();
+    material->shiness = 4.0f;
+    material->diffuse = new Texture();
+    material->diffuse->InitByFilename("assets/textures/earthmap1k.jpg");
+    material->diffuse->Bind(0);
+
+    mesh = new Mesh(geo, material);
 }
 
 void prepare_shader()
 {
     shader.InitByFilename("assets/shaders/1.vs", "assets/shaders/1.fs");
-}
-
-void prepare_texture()
-{
-    textuer_earth.InitByFilename("assets/textures/earthmap1k.jpg");
-    textuer_earth.Bind(0);
 }
 
 void prepare_camera()
@@ -73,11 +73,11 @@ void render()
     shader.SetUniform("unif_light_direction", light_direction);
     shader.SetUniform("unif_light_color", light_color);
     shader.SetUniform("unif_specular_intensity", specular_intensity);
-    shader.SetUniform("unif_specular_exponent", specular_exponent);
+    shader.SetUniform("unif_specular_exponent", dynamic_cast<PhongMaterial *>(mesh->material)->shiness);
     shader.SetUniform("unif_ambient_color", ambient_color);
     shader.SetUniform("unif_camera_position", camera->position);
-    GL_CALL(glBindVertexArray(mesh->GetVAO()));
-    GL_CALL(glDrawElements(GL_TRIANGLES, mesh->GetIndicesCount(), GL_UNSIGNED_INT, 0));
+    GL_CALL(glBindVertexArray(mesh->geometry->GetVAO()));
+    GL_CALL(glDrawElements(GL_TRIANGLES, mesh->geometry->GetIndicesCount(), GL_UNSIGNED_INT, 0));
     GL_CALL(glBindVertexArray(GL_NONE));
     shader.End();
 }
@@ -106,9 +106,8 @@ int main()
         camera_control->OnMouseCursor(xpos, ypos);
     });
 
-    prepare_vao();
+    prepare();
     prepare_shader();
-    prepare_texture();
     prepare_camera();
 
     GL_CALL(glViewport(0, 0, width, height));

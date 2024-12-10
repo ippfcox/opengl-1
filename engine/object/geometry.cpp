@@ -1,20 +1,20 @@
-#include "mesh.hpp"
+#include "geometry.hpp"
 #include "../wrapper.hpp"
 
-Mesh::Mesh()
+Geometry::Geometry()
 {
 }
 
-Mesh::~Mesh()
+Geometry::~Geometry()
 {
 }
 
-GLuint Mesh::GetVAO()
+GLuint Geometry::GetVAO()
 {
     return vao_;
 }
 
-bool Mesh::SetupVertices(std::vector<Vertex> &vertices, std::vector<unsigned int> &indices)
+bool Geometry::SetupVertices(std::vector<Vertex> &vertices, std::vector<unsigned int> &indices)
 {
     vertices_ = vertices;
     indices_ = indices;
@@ -42,7 +42,7 @@ bool Mesh::SetupVertices(std::vector<Vertex> &vertices, std::vector<unsigned int
     return true;
 }
 
-unsigned int Mesh::GetIndicesCount()
+unsigned int Geometry::GetIndicesCount()
 {
     return indices_.size();
 }

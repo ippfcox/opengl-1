@@ -9,11 +9,11 @@ struct Vertex
     glm::vec3 normal;
 };
 
-class Mesh
+class Geometry
 {
 public:
-    Mesh();
-    virtual ~Mesh();
+    Geometry();
+    virtual ~Geometry();
 
     GLuint GetVAO();
 

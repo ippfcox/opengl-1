@@ -13,7 +13,7 @@ uniform sampler2D unif_texture_noise;
 uniform vec3 unif_light_direction;
 uniform vec3 unif_light_color;
 uniform float unif_specular_intensity;
-uniform int unif_specular_exponent;
+uniform float unif_specular_exponent;
 uniform vec3 unif_ambient_color;
 uniform vec3 unif_camera_position;
 

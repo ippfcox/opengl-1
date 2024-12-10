@@ -1,6 +1,6 @@
-#include "mesh.hpp"
+#include "geometry.hpp"
 
-class Cube : public Mesh
+class Cube : public Geometry
 {
 public:
     Cube(float edge_length);
