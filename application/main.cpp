@@ -14,9 +14,11 @@ constexpr int width = 80;
 constexpr int height = 60;
 constexpr char title[] = "hy";
 
-glm::vec3 diffuse_light_direction{-1.0f, -0.3f, -3.0f};
-glm::vec3 diffuse_light_color{0.7f, 0.6, 0.0f};
-float specular_intensity = 2.0f;
+glm::vec3 light_direction{-1.0f, -0.3f, -3.0f};
+glm::vec3 light_color{0.7f, 0.6, 0.0f};
+float specular_intensity = 1.5f;
+int specular_exponent = 64;
+glm::vec3 ambient_color{0.2f, 0.2f, 0.2f};
 
 Mesh *mesh = nullptr;
 Shader shader;
@@ -64,9 +66,11 @@ void render()
     shader.SetUniform("unif_model", transform);
     shader.SetUniform("unif_view", camera->GetViewMatrix());
     shader.SetUniform("unif_projection", camera->GetProjectionMatrix());
-    shader.SetUniform("unif_light_direction", diffuse_light_direction);
-    shader.SetUniform("unif_light_color", diffuse_light_color);
+    shader.SetUniform("unif_light_direction", light_direction);
+    shader.SetUniform("unif_light_color", light_color);
     shader.SetUniform("unif_specular_intensity", specular_intensity);
+    shader.SetUniform("unif_specular_exponent", specular_exponent);
+    shader.SetUniform("unif_ambient_color", ambient_color);
     shader.SetUniform("unif_camera_position", camera->position);
     GL_CALL(glBindVertexArray(mesh->GetVAO()));
     GL_CALL(glDrawElements(GL_TRIANGLES, mesh->GetIndicesCount(), GL_UNSIGNED_INT, 0));
