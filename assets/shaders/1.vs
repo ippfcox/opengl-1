@@ -18,5 +18,6 @@ void main()
     frag_world_position = (unif_model * vec4(attr_position, 1.0)).xyz;
     gl_Position = unif_projection * unif_view * unif_model * vec4(attr_position, 1.0);
     frag_uv = attr_uv;
-    frag_normal = attr_normal;
+    // note: inverse() cost too much gpu
+    frag_normal = transpose(inverse(mat3(unif_model))) * attr_normal;
 }

@@ -20,6 +20,8 @@ float specular_intensity = 1.5f;
 int specular_exponent = 64;
 glm::vec3 ambient_color{0.2f, 0.2f, 0.2f};
 
+glm::mat4 transform(0.1f);
+
 Mesh *mesh = nullptr;
 Shader shader;
 Texture textuer_earth;
@@ -29,8 +31,8 @@ CameraControl *camera_control = nullptr;
 
 void prepare_vao()
 {
-    mesh = new Cube(10);
-    // mesh = new Sphere(2.0);
+    // mesh = new Cube(10);
+    mesh = new Sphere(5.0);
     // mesh = new Plane(2, 3);
 }
 
@@ -55,11 +57,13 @@ void prepare_camera()
     dynamic_cast<GameCameraControl *>(camera_control)->SetMoveSpeed(0.02f);
 }
 
+void do_transform()
+{
+    transform = glm::rotate(transform, 0.01f / 3, glm::vec3{0.0f, 1.0f, 0.0f});
+}
+
 void render()
 {
-    // glm::mat4 transform = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    auto transform = glm::mat4(1.0f);
-
     GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
     shader.Use();
     shader.SetUniform("unif_texture_earth", 0);
@@ -115,6 +119,7 @@ int main()
 
     while (app->Update())
     {
+        do_transform();
         camera_control->Update();
         render();
     }
