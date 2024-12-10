@@ -5,6 +5,7 @@ project(engine)
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}" SRC)
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/object" SRC)
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/object/material" SRC)
+aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/light" SRC)
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/glad/src" SRC)
 
 add_library(${PROJECT_NAME} ${SRC})
