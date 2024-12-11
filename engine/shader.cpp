@@ -184,27 +184,27 @@ int Shader::InitByFilename(const std::string &vertex_shader_filename, const std:
 
 void Shader::Use()
 {
-    glUseProgram(program_);
+    GL_CALL(glUseProgram(program_));
 }
 
 void Shader::End()
 {
-    glUseProgram(GL_NONE);
+    GL_CALL(glUseProgram(GL_NONE));
 }
 
 void Shader::SetUniform(const std::string &uniform_name, int i0)
 {
-    glUniform1i(glGetUniformLocation(program_, uniform_name.c_str()), i0);
+    GL_CALL(glUniform1i(glGetUniformLocation(program_, uniform_name.c_str()), i0));
 }
 
 void Shader::SetUniform(const std::string &uniform_name, float f0)
 {
-    glUniform1f(glGetUniformLocation(program_, uniform_name.c_str()), f0);
+    GL_CALL(glUniform1f(glGetUniformLocation(program_, uniform_name.c_str()), f0));
 }
 
 void Shader::SetUniform(const std::string &uniform_name, float f0, float f1, float f2)
 {
-    glUniform3f(glGetUniformLocation(program_, uniform_name.c_str()), f0, f1, f2);
+    GL_CALL(glUniform3f(glGetUniformLocation(program_, uniform_name.c_str()), f0, f1, f2));
 }
 
 void Shader::SetUniform(const std::string &uniform_name, glm::vec3 v)
@@ -214,7 +214,7 @@ void Shader::SetUniform(const std::string &uniform_name, glm::vec3 v)
 
 void Shader::SetUniform(const std::string &uniform_name, float f0, float f1, float f2, float f3)
 {
-    glUniform4f(glGetUniformLocation(program_, uniform_name.c_str()), f0, f1, f2, f3);
+    GL_CALL(glUniform4f(glGetUniformLocation(program_, uniform_name.c_str()), f0, f1, f2, f3));
 }
 
 void Shader::SetUniform(const std::string &uniform_name, glm::vec4 v)
@@ -224,7 +224,7 @@ void Shader::SetUniform(const std::string &uniform_name, glm::vec4 v)
 
 void Shader::SetUniform(const std::string &uniform_name, const float *matrix4fv)
 {
-    glUniformMatrix4fv(glGetUniformLocation(program_, uniform_name.c_str()), 1, GL_FALSE, matrix4fv);
+    GL_CALL(glUniformMatrix4fv(glGetUniformLocation(program_, uniform_name.c_str()), 1, GL_FALSE, matrix4fv));
 }
 
 void Shader::SetUniform(const std::string &uniform_name, glm::mat4 m)

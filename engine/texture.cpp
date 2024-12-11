@@ -15,6 +15,7 @@ Texture::~Texture()
 
 bool Texture::InitByFilename(const std::string &path)
 {
+    stbi_set_flip_vertically_on_load(1);
     int channels;
     stbi_uc *data = stbi_load(path.c_str(), &width_, &height_, &channels, STBI_rgb_alpha);
 

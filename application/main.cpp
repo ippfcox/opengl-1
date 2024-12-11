@@ -8,43 +8,47 @@
 #include "object/object.hpp"
 #include "object/mesh.hpp"
 #include "object/sphere.hpp"
+#include "object/cube.hpp"
 #include "object/material/phong_material.hpp"
+#include "renderer/renderer.hpp"
 #include "wrapper.hpp"
 
 constexpr int width = 800;
 constexpr int height = 600;
 constexpr char title[] = "hy";
 
-glm::vec3 light_direction{-1.0f, -0.3f, -3.0f};
-glm::vec3 light_color{0.7f, 0.6, 0.0f};
-float specular_intensity = 1.5f;
-glm::vec3 ambient_color{0.2f, 0.2f, 0.2f};
-
-glm::mat4 transform(1.0f);
-
-Mesh *mesh = nullptr;
-Shader shader;
-Texture textuer_earth;
+Renderer *renderer = nullptr;
+std::vector<Mesh *> meshes{};
+DirectionalLight *directional_light = nullptr;
+AmbientLight *ambient_light = nullptr;
 
 Camera *camera = nullptr;
 CameraControl *camera_control = nullptr;
 
 void prepare()
 {
-    auto geo = new Sphere(1.0f);
+    // renderer
+    renderer = new Renderer();
+
+    // meshes
+    auto geometry = new Sphere(1.0f);
 
     auto material = new PhongMaterial();
     material->shiness = 4.0f;
     material->diffuse = new Texture();
     material->diffuse->InitByFilename("assets/textures/earthmap1k.jpg");
-    material->diffuse->Bind(0);
 
-    mesh = new Mesh(geo, material);
-}
+    auto mesh = new Mesh(geometry, material);
 
-void prepare_shader()
-{
-    shader.InitByFilename("assets/shaders/1.vs", "assets/shaders/1.fs");
+    meshes.push_back(mesh);
+
+    // light
+    directional_light = new DirectionalLight();
+    directional_light->direction = {-1.0f, -0.3f, -3.0f};
+    directional_light->color = {0.7f, 0.6, 0.0f};
+    directional_light->specular_intensity = 1.5f;
+    ambient_light = new AmbientLight();
+    // ambient_light->color = {0.2f, 0.2f, 0.2f};
 }
 
 void prepare_camera()
@@ -55,31 +59,6 @@ void prepare_camera()
     camera_control = new GameCameraControl();
     camera_control->SetCamera(camera);
     dynamic_cast<GameCameraControl *>(camera_control)->SetMoveSpeed(0.02f);
-}
-
-void do_transform()
-{
-    transform = glm::rotate(transform, 0.01f / 3, glm::vec3{0.0f, 1.0f, 0.0f});
-}
-
-void render()
-{
-    GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-    shader.Use();
-    shader.SetUniform("unif_texture_earth", 0);
-    shader.SetUniform("unif_model", transform);
-    shader.SetUniform("unif_view", camera->GetViewMatrix());
-    shader.SetUniform("unif_projection", camera->GetProjectionMatrix());
-    shader.SetUniform("unif_light_direction", light_direction);
-    shader.SetUniform("unif_light_color", light_color);
-    shader.SetUniform("unif_specular_intensity", specular_intensity);
-    shader.SetUniform("unif_specular_exponent", dynamic_cast<PhongMaterial *>(mesh->material)->shiness);
-    shader.SetUniform("unif_ambient_color", ambient_color);
-    shader.SetUniform("unif_camera_position", camera->position);
-    GL_CALL(glBindVertexArray(mesh->geometry->GetVAO()));
-    GL_CALL(glDrawElements(GL_TRIANGLES, mesh->geometry->GetIndicesCount(), GL_UNSIGNED_INT, 0));
-    GL_CALL(glBindVertexArray(GL_NONE));
-    shader.End();
 }
 
 int main()
@@ -107,20 +86,16 @@ int main()
     });
 
     prepare();
-    prepare_shader();
     prepare_camera();
 
     GL_CALL(glViewport(0, 0, width, height));
     GL_CALL(glClearColor(0.3f, 0.3f, 0.3f, 1.0f));
-    GL_CALL(glEnable(GL_DEPTH_TEST));
-    GL_CALL(glDepthFunc(GL_LESS));
     // GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
 
     while (app->Update())
     {
-        do_transform();
         camera_control->Update();
-        render();
+        renderer->Render(meshes, camera, directional_light, ambient_light);
     }
 
     app->Destroy();

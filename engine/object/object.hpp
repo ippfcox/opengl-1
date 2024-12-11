@@ -16,9 +16,9 @@ public:
     glm::mat4 GetModelMatrix();
 
 protected:
-    glm::vec3 world_position_;
-    float angle_x_;
-    float angle_y_;
-    float angle_z_;
-    glm::vec3 scale_;
+    glm::vec3 world_position_{0.0f};
+    float angle_x_{0.0f};
+    float angle_y_{0.0f};
+    float angle_z_{0.0f};
+    glm::vec3 scale_{1.0f};
 };
