@@ -31,12 +31,14 @@ void prepare()
     renderer = new Renderer();
 
     // meshes
-    auto geometry = new Sphere(1.0f);
+    auto geometry = new Cube(2.0f);
 
     auto material = new PhongMaterial();
     material->shiness = 32.0f;
     material->diffuse = new Texture();
-    material->diffuse->InitByFilename("assets/textures/earthmap1k.jpg");
+    material->diffuse->InitByFilename("assets/textures/box.png");
+    material->specular_mask = new Texture();
+    material->specular_mask->InitByFilename("assets/textures/box_specular.png");
 
     auto mesh = new Mesh(geometry, material);
 
@@ -45,7 +47,7 @@ void prepare()
     // light
     directional_light = new DirectionalLight();
     directional_light->direction = {-1.0f, -0.3f, -3.0f};
-    directional_light->color = {0.7f, 0.6, 0.0f};
+    directional_light->color = {0.5f, 0.5f, 0.5f};
     directional_light->specular_intensity = 1.5f;
     ambient_light = new AmbientLight();
     ambient_light->color = {0.2f, 0.2f, 0.2f};

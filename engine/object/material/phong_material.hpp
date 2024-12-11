@@ -8,5 +8,6 @@ public:
     ~PhongMaterial();
 
     Texture *diffuse;
+    Texture *specular_mask;
     float shiness;
 };

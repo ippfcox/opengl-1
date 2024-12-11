@@ -40,8 +40,10 @@ void Renderer::Render(
         {
             auto material = dynamic_cast<PhongMaterial *>(mesh->material);
             //   texture
-            material->diffuse->Bind(0);            // bind texture to texture unit
-            shader->SetUniform("unif_sampler", 0); // bind texture sampler to texture unit
+            material->diffuse->Bind(0);                    // bind texture to texture unit
+            shader->SetUniform("unif_diffuse_sampler", 0); // bind texture sampler to texture unit
+            material->specular_mask->Bind(1);
+            shader->SetUniform("unif_specular_mask_sampler", 1);
             //   mvp
             shader->SetUniform("unif_model", mesh->GetModelMatrix());
             shader->SetUniform("unif_view", camera->GetViewMatrix());
