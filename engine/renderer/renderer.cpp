@@ -40,17 +40,19 @@ void Renderer::Render(
         {
             auto material = dynamic_cast<PhongMaterial *>(mesh->material);
             //   texture
-            material->diffuse->Bind(0);                  // bind texture to texture unit
-            shader->SetUniform("unif_texture_earth", 0); // bind texture sampler to texture unit
+            material->diffuse->Bind(0);            // bind texture to texture unit
+            shader->SetUniform("unif_sampler", 0); // bind texture sampler to texture unit
             //   mvp
             shader->SetUniform("unif_model", mesh->GetModelMatrix());
             shader->SetUniform("unif_view", camera->GetViewMatrix());
             shader->SetUniform("unif_projection", camera->GetProjectionMatrix());
+            auto normal_matrix = glm::mat3(glm::transpose(glm::inverse(mesh->GetModelMatrix())));
+            shader->SetUniform("unif_normal_matrix", normal_matrix);
             //   light
             shader->SetUniform("unif_light_direction", directional_light->direction);
             shader->SetUniform("unif_light_color", directional_light->color);
             shader->SetUniform("unif_specular_intensity", directional_light->specular_intensity);
-            shader->SetUniform("unif_specular_exponent", dynamic_cast<PhongMaterial *>(mesh->material)->shiness);
+            shader->SetUniform("unif_specular_shiness", material->shiness);
             shader->SetUniform("unif_ambient_color", ambient_light->color);
             //   camera
             shader->SetUniform("unif_camera_position", camera->position);

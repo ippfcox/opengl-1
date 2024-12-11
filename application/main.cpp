@@ -34,7 +34,7 @@ void prepare()
     auto geometry = new Sphere(1.0f);
 
     auto material = new PhongMaterial();
-    material->shiness = 4.0f;
+    material->shiness = 32.0f;
     material->diffuse = new Texture();
     material->diffuse->InitByFilename("assets/textures/earthmap1k.jpg");
 
@@ -48,7 +48,7 @@ void prepare()
     directional_light->color = {0.7f, 0.6, 0.0f};
     directional_light->specular_intensity = 1.5f;
     ambient_light = new AmbientLight();
-    // ambient_light->color = {0.2f, 0.2f, 0.2f};
+    ambient_light->color = {0.2f, 0.2f, 0.2f};
 }
 
 void prepare_camera()

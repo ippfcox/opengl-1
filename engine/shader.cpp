@@ -227,9 +227,14 @@ void Shader::SetUniform(const std::string &uniform_name, const float *matrix4fv)
     GL_CALL(glUniformMatrix4fv(glGetUniformLocation(program_, uniform_name.c_str()), 1, GL_FALSE, matrix4fv));
 }
 
+void Shader::SetUniform(const std::string &uniform_name, glm::mat3 m)
+{
+    GL_CALL(glUniformMatrix3fv(glGetUniformLocation(program_, uniform_name.c_str()), 1, GL_FALSE, glm::value_ptr(m)));
+}
+
 void Shader::SetUniform(const std::string &uniform_name, glm::mat4 m)
 {
-    SetUniform(uniform_name, glm::value_ptr(m));
+    GL_CALL(glUniformMatrix4fv(glGetUniformLocation(program_, uniform_name.c_str()), 1, GL_FALSE, glm::value_ptr(m)));
 }
 
 void Shader::SetUniform(const std::string &uniform_name, bool b)
