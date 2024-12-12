@@ -21,6 +21,7 @@ constexpr char title[] = "hy";
 Renderer *renderer = nullptr;
 std::vector<Mesh *> meshes{};
 DirectionalLight *directional_light = nullptr;
+PointLight *point_light = nullptr;
 AmbientLight *ambient_light = nullptr;
 SpotLight *spot_light = nullptr;
 
@@ -59,6 +60,14 @@ void prepare()
     directional_light->direction = {-1.0f, -0.3f, -3.0f};
     directional_light->color = {0.5f, 0.5f, 0.5f};
     directional_light->specular_intensity = 1.5f;
+    point_light = new PointLight();
+    point_light->SetPosition({0.0f, 3.0f, 0.0f});
+    point_light->color = {1.0f, 0.0f, 0.0f};
+    point_light->specular_intensity = 2.0f;
+    point_light->k2 = 0.17f;
+    point_light->k1 = 0.07;
+    point_light->kc = 1.0f;
+
     ambient_light = new AmbientLight();
     ambient_light->color = {0.2f, 0.2f, 0.2f};
     spot_light = new SpotLight();
@@ -114,7 +123,7 @@ int main()
     while (app->Update())
     {
         camera_control->Update();
-        renderer->Render(meshes, camera, spot_light, directional_light, ambient_light);
+        renderer->Render(meshes, camera, spot_light, directional_light, point_light, ambient_light);
     }
 
     app->Destroy();

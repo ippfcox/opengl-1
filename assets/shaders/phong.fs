@@ -38,6 +38,7 @@ uniform sampler2D unif_specular_mask_sampler;
 
 uniform DirectionalLight unif_directional_light;
 uniform SpotLight unif_spot_light;
+uniform PointLight unif_point_light;
 
 uniform float unif_specular_shiness;
 uniform vec3 unif_ambient_color;
@@ -85,6 +86,20 @@ vec3 calcualte_directeional_light(DirectionalLight light, vec3 normal_n, vec3 vi
     return diffuse_color + specular_color;
 }
 
+vec3 calculate_point_light(PointLight light, vec3 normal_n, vec3 view_direction_n)
+{
+    vec3 object_color = texture(unif_diffuse_sampler, frag_uv).rgb; // dup?
+    vec3 light_direction_n = normalize(frag_world_position - light.position);
+    
+    float dist = length(frag_world_position - light.position);
+    float attenuation = 1.0 / (light.k2 * dist * dist + light.k1 * dist + light.kc);
+
+    vec3 diffuse_color = calculate_diffuse_color(light.color, object_color, light_direction_n, normal_n);
+    vec3 specular_color = calculate_specular_color(light.color, light_direction_n, normal_n, view_direction_n, light.specular_intensity);
+
+    return (diffuse_color + specular_color) * attenuation;
+}
+
 void main()
 {
     // light common
@@ -95,6 +110,7 @@ void main()
     vec3 final_color = vec3(0.0);
     final_color += calculate_spot_light(unif_spot_light, frag_normal_n, view_direction_n);
     final_color += calcualte_directeional_light(unif_directional_light, frag_normal_n, view_direction_n);
+    final_color += calculate_point_light(unif_point_light, frag_normal_n, view_direction_n);
     
     vec3 ambient_color = unif_ambient_color * object_color;
     

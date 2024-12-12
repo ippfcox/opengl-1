@@ -22,6 +22,7 @@ void Renderer::Render(
     Camera *camera,
     SpotLight *spot_light,
     DirectionalLight *directional_light,
+    PointLight *point_light,
     AmbientLight *ambient_light)
 {
     // set state
@@ -62,7 +63,12 @@ void Renderer::Render(
             shader->SetUniform("unif_spot_light.direction", spot_light->direction);
             shader->SetUniform("unif_spot_light.inner_cone", glm::cos(glm::radians(spot_light->inner_angle)));
             shader->SetUniform("unif_spot_light.outer_cone", glm::cos(glm::radians(spot_light->outer_angle)));
-
+            shader->SetUniform("unif_point_light.color", point_light->color);
+            shader->SetUniform("unif_point_light.specular_intensity", point_light->specular_intensity);
+            shader->SetUniform("unif_point_light.position", point_light->GetPosition());
+            shader->SetUniform("unif_point_light.k2", point_light->k2);
+            shader->SetUniform("unif_point_light.k1", point_light->k1);
+            shader->SetUniform("unif_point_light.kc", point_light->kc);
             shader->SetUniform("unif_directional_light.color", directional_light->color);
             shader->SetUniform("unif_directional_light.specular_intensity", directional_light->specular_intensity);
             shader->SetUniform("unif_directional_light.direction", directional_light->direction);
