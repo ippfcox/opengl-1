@@ -7,6 +7,7 @@
 #include "../../application/camera/camera.hpp" // [fixme] refactor needed
 #include "../light/directional_light.hpp"
 #include "../light/ambient_light.hpp"
+#include "../light/spot_light.hpp"
 
 class Renderer
 {
@@ -17,6 +18,7 @@ public:
     void Render(
         const std::vector<Mesh *> &meshes,
         Camera *camera,
+        SpotLight *spot_light,
         DirectionalLight *directional_light,
         AmbientLight *ambient_light);
 

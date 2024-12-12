@@ -13,6 +13,11 @@ void Object::SetPosition(glm::vec3 world_position)
     world_position_ = world_position;
 }
 
+glm::vec3 Object::GetPosition() const
+{
+    return world_position_;
+}
+
 void Object::SetRotateX(float angle_delta)
 {
     angle_x_ += angle_delta;

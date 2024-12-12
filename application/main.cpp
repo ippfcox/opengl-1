@@ -10,6 +10,7 @@
 #include "object/sphere.hpp"
 #include "object/cube.hpp"
 #include "object/material/phong_material.hpp"
+#include "object/material/pure_material.hpp"
 #include "renderer/renderer.hpp"
 #include "wrapper.hpp"
 
@@ -19,8 +20,9 @@ constexpr char title[] = "hy";
 
 Renderer *renderer = nullptr;
 std::vector<Mesh *> meshes{};
-DirectionalLight *directional_light = nullptr;
-AmbientLight *ambient_light = nullptr;
+// DirectionalLight *directional_light = nullptr;
+// AmbientLight *ambient_light = nullptr;
+SpotLight *spot_light = nullptr;
 
 Camera *camera = nullptr;
 CameraControl *camera_control = nullptr;
@@ -44,13 +46,28 @@ void prepare()
 
     meshes.push_back(mesh);
 
+    auto geometry2 = new Sphere(0.1f);
+    auto material2 = new PureMaterial();
+    material2->color = {1.0f, 1.0f, 0.0f};
+    auto mesh2 = new Mesh(geometry2, material2);
+    mesh2->SetPosition({2.3f, 0.0f, 0.0f});
+
+    meshes.push_back(mesh2);
+
     // light
-    directional_light = new DirectionalLight();
-    directional_light->direction = {-1.0f, -0.3f, -3.0f};
-    directional_light->color = {0.5f, 0.5f, 0.5f};
-    directional_light->specular_intensity = 1.5f;
-    ambient_light = new AmbientLight();
-    ambient_light->color = {0.2f, 0.2f, 0.2f};
+    // directional_light = new DirectionalLight();
+    // directional_light->direction = {-1.0f, -0.3f, -3.0f};
+    // directional_light->color = {0.5f, 0.5f, 0.5f};
+    // directional_light->specular_intensity = 1.5f;
+    // ambient_light = new AmbientLight();
+    // ambient_light->color = {0.2f, 0.2f, 0.2f};
+    spot_light = new SpotLight();
+    spot_light->SetPosition(mesh2->GetPosition());
+    spot_light->direction = {-1.0f, 0.0f, 0.0f};
+    spot_light->inner_angle = 30.0f;
+    spot_light->outer_angle = 45.0f;
+    spot_light->color = {1.0f, 1.0f, 0.0f};
+    spot_light->specular_intensity = 0.5f;
 }
 
 void prepare_camera()
@@ -97,7 +114,7 @@ int main()
     while (app->Update())
     {
         camera_control->Update();
-        renderer->Render(meshes, camera, directional_light, ambient_light);
+        renderer->Render(meshes, camera, spot_light, nullptr, nullptr);
     }
 
     app->Destroy();

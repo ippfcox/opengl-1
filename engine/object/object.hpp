@@ -9,6 +9,7 @@ public:
     virtual ~Object();
 
     void SetPosition(glm::vec3 world_position);
+    glm::vec3 GetPosition() const;
     void SetRotateX(float angle_delta);
     void SetRotateY(float angle_delta);
     void SetRotateZ(float angle_delta);

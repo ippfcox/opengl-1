@@ -1,5 +1,6 @@
 #include "renderer.hpp"
 #include "../object/material/phong_material.hpp"
+#include "../object/material/pure_material.hpp"
 #include "../wrapper.hpp"
 
 Renderer::Renderer()
@@ -7,6 +8,9 @@ Renderer::Renderer()
     auto phong_shader = new Shader();
     phong_shader->InitByFilename("assets/shaders/phong.vs", "assets/shaders/phong.fs");
     shader_map_[MaterialType::Phong] = phong_shader;
+    auto pure_shader = new Shader();
+    pure_shader->InitByFilename("assets/shaders/pure.vs", "assets/shaders/pure.fs");
+    shader_map_[MaterialType::Pure] = pure_shader;
 }
 
 Renderer::~Renderer()
@@ -16,6 +20,7 @@ Renderer::~Renderer()
 void Renderer::Render(
     const std::vector<Mesh *> &meshes,
     Camera *camera,
+    SpotLight *spot_light,
     DirectionalLight *directional_light,
     AmbientLight *ambient_light)
 {
@@ -51,13 +56,31 @@ void Renderer::Render(
             auto normal_matrix = glm::mat3(glm::transpose(glm::inverse(mesh->GetModelMatrix())));
             shader->SetUniform("unif_normal_matrix", normal_matrix);
             //   light
-            shader->SetUniform("unif_light_direction", directional_light->direction);
-            shader->SetUniform("unif_light_color", directional_light->color);
-            shader->SetUniform("unif_specular_intensity", directional_light->specular_intensity);
-            shader->SetUniform("unif_specular_shiness", material->shiness);
-            shader->SetUniform("unif_ambient_color", ambient_light->color);
+            shader->SetUniform("unif_spot_light.color", spot_light->color);
+            shader->SetUniform("unif_spot_light.specular_intensity", spot_light->specular_intensity);
+            shader->SetUniform("unif_spot_light.position", spot_light->GetPosition());
+            shader->SetUniform("unif_spot_light.direction", spot_light->direction);
+            shader->SetUniform("unif_spot_light.inner_cone", glm::cos(glm::radians(spot_light->inner_angle)));
+            shader->SetUniform("unif_spot_light.outer_cone", glm::cos(glm::radians(spot_light->outer_angle)));
+
+            // shader->SetUniform("unif_directional_light.color", directional_light->color);
+            // shader->SetUniform("unif_directional_light.specular_intensity", directional_light->specular_intensity);
+            // shader->SetUniform("unif_directional_light.direction", directional_light->direction);
+            // shader->SetUniform("unif_specular_shiness", material->shiness);
+            // shader->SetUniform("unif_ambient_color", ambient_light->color);
             //   camera
             shader->SetUniform("unif_camera_position", camera->position);
+        }
+        break;
+        case MaterialType::Pure:
+        {
+            auto material = dynamic_cast<PureMaterial *>(mesh->material);
+            //   color
+            shader->SetUniform("unif_point_light_color", material->color);
+            //   mvp
+            shader->SetUniform("unif_model", mesh->GetModelMatrix());
+            shader->SetUniform("unif_view", camera->GetViewMatrix());
+            shader->SetUniform("unif_projection", camera->GetProjectionMatrix());
         }
         break;
         default:
