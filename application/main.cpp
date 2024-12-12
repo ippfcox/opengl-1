@@ -20,7 +20,7 @@ constexpr char title[] = "hy";
 
 Renderer *renderer = nullptr;
 std::vector<Mesh *> meshes{};
-// DirectionalLight *directional_light = nullptr;
+DirectionalLight *directional_light = nullptr;
 AmbientLight *ambient_light = nullptr;
 SpotLight *spot_light = nullptr;
 
@@ -55,10 +55,10 @@ void prepare()
     meshes.push_back(mesh2);
 
     // light
-    // directional_light = new DirectionalLight();
-    // directional_light->direction = {-1.0f, -0.3f, -3.0f};
-    // directional_light->color = {0.5f, 0.5f, 0.5f};
-    // directional_light->specular_intensity = 1.5f;
+    directional_light = new DirectionalLight();
+    directional_light->direction = {-1.0f, -0.3f, -3.0f};
+    directional_light->color = {0.5f, 0.5f, 0.5f};
+    directional_light->specular_intensity = 1.5f;
     ambient_light = new AmbientLight();
     ambient_light->color = {0.2f, 0.2f, 0.2f};
     spot_light = new SpotLight();
@@ -108,13 +108,13 @@ int main()
     prepare_camera();
 
     GL_CALL(glViewport(0, 0, width, height));
-    GL_CALL(glClearColor(0.3f, 0.3f, 0.3f, 1.0f));
+    GL_CALL(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
     // GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
 
     while (app->Update())
     {
         camera_control->Update();
-        renderer->Render(meshes, camera, spot_light, nullptr, ambient_light);
+        renderer->Render(meshes, camera, spot_light, directional_light, ambient_light);
     }
 
     app->Destroy();

@@ -74,6 +74,17 @@ vec3 calculate_spot_light(SpotLight light, vec3 normal_n, vec3 view_direction_n)
     return (diffuse_color + specular_color) * intensity;
 }
 
+vec3 calcualte_directeional_light(DirectionalLight light, vec3 normal_n, vec3 view_direction_n)
+{
+    vec3 object_color = texture(unif_diffuse_sampler, frag_uv).rgb; // dup?
+    vec3 light_direction_n = normalize(light.direction);
+    
+    vec3 diffuse_color = calculate_diffuse_color(light.color, object_color, light_direction_n, normal_n);
+    vec3 specular_color = calculate_specular_color(light.color, light_direction_n, normal_n, view_direction_n, light.specular_intensity);
+
+    return diffuse_color + specular_color;
+}
+
 void main()
 {
     // light common
@@ -83,6 +94,7 @@ void main()
 
     vec3 final_color = vec3(0.0);
     final_color += calculate_spot_light(unif_spot_light, frag_normal_n, view_direction_n);
+    final_color += calcualte_directeional_light(unif_directional_light, frag_normal_n, view_direction_n);
     
     vec3 ambient_color = unif_ambient_color * object_color;
     

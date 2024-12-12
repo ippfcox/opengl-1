@@ -63,9 +63,9 @@ void Renderer::Render(
             shader->SetUniform("unif_spot_light.inner_cone", glm::cos(glm::radians(spot_light->inner_angle)));
             shader->SetUniform("unif_spot_light.outer_cone", glm::cos(glm::radians(spot_light->outer_angle)));
 
-            // shader->SetUniform("unif_directional_light.color", directional_light->color);
-            // shader->SetUniform("unif_directional_light.specular_intensity", directional_light->specular_intensity);
-            // shader->SetUniform("unif_directional_light.direction", directional_light->direction);
+            shader->SetUniform("unif_directional_light.color", directional_light->color);
+            shader->SetUniform("unif_directional_light.specular_intensity", directional_light->specular_intensity);
+            shader->SetUniform("unif_directional_light.direction", directional_light->direction);
             shader->SetUniform("unif_specular_shiness", material->shiness);
             shader->SetUniform("unif_ambient_color", ambient_light->color);
             //   camera
