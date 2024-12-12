@@ -61,7 +61,7 @@ vec3 calculate_specular_color(vec3 light_color, vec3 light_direction_n, vec3 nor
 
 vec3 calculate_spot_light(SpotLight light, vec3 normal_n, vec3 view_direction_n)
 {
-    vec3 object_color = texture(unif_diffuse_sampler, frag_uv).rgb;
+    vec3 object_color = texture(unif_diffuse_sampler, frag_uv).rgb; // dup?
     vec3 light_direction_n = normalize(frag_world_position - light.position);
     vec3 target_direction_n = normalize(light.direction);
 
@@ -77,10 +77,16 @@ vec3 calculate_spot_light(SpotLight light, vec3 normal_n, vec3 view_direction_n)
 void main()
 {
     // light common
+    vec3 object_color = texture(unif_diffuse_sampler, frag_uv).rgb;
     vec3 frag_normal_n = normalize(frag_normal);
     vec3 view_direction_n = normalize(frag_world_position - unif_camera_position);
 
-    vec3 final_color = calculate_spot_light(unif_spot_light, frag_normal_n, view_direction_n);
+    vec3 final_color = vec3(0.0);
+    final_color += calculate_spot_light(unif_spot_light, frag_normal_n, view_direction_n);
+    
+    vec3 ambient_color = unif_ambient_color * object_color;
+    
+    final_color += ambient_color;
 
     // debug
 

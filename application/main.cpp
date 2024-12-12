@@ -21,7 +21,7 @@ constexpr char title[] = "hy";
 Renderer *renderer = nullptr;
 std::vector<Mesh *> meshes{};
 // DirectionalLight *directional_light = nullptr;
-// AmbientLight *ambient_light = nullptr;
+AmbientLight *ambient_light = nullptr;
 SpotLight *spot_light = nullptr;
 
 Camera *camera = nullptr;
@@ -36,7 +36,7 @@ void prepare()
     auto geometry = new Cube(2.0f);
 
     auto material = new PhongMaterial();
-    material->shiness = 32.0f;
+    material->shiness = 40.0f;
     material->diffuse = new Texture();
     material->diffuse->InitByFilename("assets/textures/box.png");
     material->specular_mask = new Texture();
@@ -59,15 +59,15 @@ void prepare()
     // directional_light->direction = {-1.0f, -0.3f, -3.0f};
     // directional_light->color = {0.5f, 0.5f, 0.5f};
     // directional_light->specular_intensity = 1.5f;
-    // ambient_light = new AmbientLight();
-    // ambient_light->color = {0.2f, 0.2f, 0.2f};
+    ambient_light = new AmbientLight();
+    ambient_light->color = {0.2f, 0.2f, 0.2f};
     spot_light = new SpotLight();
     spot_light->SetPosition(mesh2->GetPosition());
     spot_light->direction = {-1.0f, 0.0f, 0.0f};
-    spot_light->inner_angle = 30.0f;
-    spot_light->outer_angle = 45.0f;
+    spot_light->inner_angle = 20.0f;
+    spot_light->outer_angle = 30.0f;
     spot_light->color = {1.0f, 1.0f, 0.0f};
-    spot_light->specular_intensity = 0.5f;
+    spot_light->specular_intensity = 0.8f;
 }
 
 void prepare_camera()
@@ -114,7 +114,7 @@ int main()
     while (app->Update())
     {
         camera_control->Update();
-        renderer->Render(meshes, camera, spot_light, nullptr, nullptr);
+        renderer->Render(meshes, camera, spot_light, nullptr, ambient_light);
     }
 
     app->Destroy();

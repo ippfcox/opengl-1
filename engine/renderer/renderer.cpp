@@ -66,8 +66,8 @@ void Renderer::Render(
             // shader->SetUniform("unif_directional_light.color", directional_light->color);
             // shader->SetUniform("unif_directional_light.specular_intensity", directional_light->specular_intensity);
             // shader->SetUniform("unif_directional_light.direction", directional_light->direction);
-            // shader->SetUniform("unif_specular_shiness", material->shiness);
-            // shader->SetUniform("unif_ambient_color", ambient_light->color);
+            shader->SetUniform("unif_specular_shiness", material->shiness);
+            shader->SetUniform("unif_ambient_color", ambient_light->color);
             //   camera
             shader->SetUniform("unif_camera_position", camera->position);
         }
