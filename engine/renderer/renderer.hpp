@@ -21,7 +21,7 @@ public:
         Camera *camera,
         SpotLight *spot_light,
         DirectionalLight *directional_light,
-        PointLight *point_light,
+        const std::vector<PointLight *> point_lights,
         AmbientLight *ambient_light);
 
 private:

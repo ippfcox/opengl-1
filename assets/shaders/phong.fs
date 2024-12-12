@@ -38,7 +38,8 @@ uniform sampler2D unif_specular_mask_sampler;
 
 uniform DirectionalLight unif_directional_light;
 uniform SpotLight unif_spot_light;
-uniform PointLight unif_point_light;
+#define POINT_LIGHT_NUM 4
+uniform PointLight unif_point_lights[POINT_LIGHT_NUM];
 
 uniform float unif_specular_shiness;
 uniform vec3 unif_ambient_color;
@@ -110,7 +111,10 @@ void main()
     vec3 final_color = vec3(0.0);
     final_color += calculate_spot_light(unif_spot_light, frag_normal_n, view_direction_n);
     final_color += calcualte_directeional_light(unif_directional_light, frag_normal_n, view_direction_n);
-    final_color += calculate_point_light(unif_point_light, frag_normal_n, view_direction_n);
+    for (int i = 0; i < POINT_LIGHT_NUM; i++)
+    {
+        final_color += calculate_point_light(unif_point_lights[i], frag_normal_n, view_direction_n);
+    }
     
     vec3 ambient_color = unif_ambient_color * object_color;
     
