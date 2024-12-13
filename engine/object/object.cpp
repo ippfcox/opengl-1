@@ -52,3 +52,26 @@ glm::mat4 Object::GetModelMatrix()
 
     return transform;
 }
+
+void Object::AddChild(Object *object)
+{
+    auto iter = std::find(children_.begin(), children_.end(), object);
+    if (iter != children_.end())
+    {
+        SPDLOG_WARN("add duplicate object");
+        return;
+    }
+    
+    children_.push_back(object);
+    object->parent_ = this;
+}
+
+std::vector<Object *> Object::GetChildren()
+{
+    return children_;
+}
+
+Object *Object::GetParent()
+{
+    return parent_;
+}

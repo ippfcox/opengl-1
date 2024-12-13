@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include "../common.hpp"
 
 class Object
@@ -16,10 +17,17 @@ public:
     void SetScale(glm::vec3 scale);
     glm::mat4 GetModelMatrix();
 
+    void AddChild(Object *object);
+    std::vector<Object *> GetChildren();
+    Object *GetParent();
+
 protected:
     glm::vec3 world_position_{0.0f};
     float angle_x_{0.0f};
     float angle_y_{0.0f};
     float angle_z_{0.0f};
     glm::vec3 scale_{1.0f};
+
+    std::vector<Object *> children_{};
+    Object *parent_;
 };
