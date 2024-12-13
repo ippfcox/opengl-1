@@ -17,6 +17,12 @@ Renderer::~Renderer()
 {
 }
 
+void Renderer::SetClearColor(glm::vec3 clear_color)
+{
+    clear_color_ = clear_color;
+    glClearColor(clear_color.r, clear_color.g, clear_color.b, 1.0f);
+}
+
 void Renderer::Render(
     const std::vector<Mesh *> &meshes,
     Camera *camera,

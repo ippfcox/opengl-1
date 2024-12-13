@@ -31,6 +31,8 @@ SpotLight *spot_light = nullptr;
 Camera *camera = nullptr;
 CameraControl *camera_control = nullptr;
 
+glm::vec3 clear_color{0.0f};
+
 void prepare()
 {
     // renderer
@@ -133,6 +135,7 @@ void render_imgui(Application *app)
     ImGui::NewFrame();
 
     ImGui::Begin("debug");
+    ImGui::ColorEdit3("clear color", reinterpret_cast<float *>(&clear_color));
     ImGui::End();
 
     ImGui::Render();
@@ -177,6 +180,7 @@ int main()
     while (app->Update())
     {
         camera_control->Update();
+        renderer->SetClearColor(clear_color);
         renderer->Render(meshes, camera, spot_light, directional_light, point_lights, ambient_light);
         render_imgui(app);
     }

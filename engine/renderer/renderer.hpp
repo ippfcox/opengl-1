@@ -16,6 +16,8 @@ public:
     Renderer();
     ~Renderer();
 
+    void SetClearColor(glm::vec3 clear_color);
+
     void Render(
         const std::vector<Mesh *> &meshes,
         Camera *camera,
@@ -26,4 +28,5 @@ public:
 
 private:
     std::unordered_map<MaterialType, Shader *> shader_map_;
+    glm::vec3 clear_color_;
 };
