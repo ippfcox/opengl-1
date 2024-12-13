@@ -23,6 +23,7 @@ public:
     bool SetOnMouseScroll(OnMouseScrollCallback on_mouse_scroll);
     bool SetOnMouseCursor(OnMouseCursorCallback on_mouse_cursor);
 
+    GLFWwindow *GetWindow() const;
     std::string GetTitle() const;
     int GetWidth() const;
     int GetHeight() const;

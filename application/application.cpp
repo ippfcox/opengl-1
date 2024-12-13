@@ -164,6 +164,11 @@ bool Application::SetOnMouseCursor(OnMouseCursorCallback on_mouse_cursor)
     return true;
 }
 
+GLFWwindow *Application::GetWindow() const
+{
+    return glfw_window_;
+}
+
 std::string Application::GetTitle() const
 {
     return title_;

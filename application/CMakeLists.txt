@@ -4,6 +4,8 @@ project(test-1)
 
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}" SRC)
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/camera" SRC)
+aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/imgui" SRC)
+aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/imgui/backends" SRC)
 
 add_executable(${PROJECT_NAME} ${SRC})
 
@@ -19,6 +21,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/glfw/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/stb/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/glm/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/imgui"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/imgui/backends"
 )
 
 target_link_directories(${PROJECT_NAME} PRIVATE

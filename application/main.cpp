@@ -12,6 +12,9 @@
 #include "object/material/phong_material.hpp"
 #include "object/material/pure_material.hpp"
 #include "renderer/renderer.hpp"
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 #include "wrapper.hpp"
 
 constexpr int width = 800;
@@ -114,6 +117,31 @@ void prepare_camera()
     dynamic_cast<GameCameraControl *>(camera_control)->SetMoveSpeed(0.02f);
 }
 
+void init_imgui(Application *app)
+{
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplOpenGL3_Init("#version 460");
+    ImGui_ImplGlfw_InitForOpenGL(app->GetWindow(), true);
+}
+
+void render_imgui(Application *app)
+{
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::Begin("debug");
+    ImGui::End();
+
+    ImGui::Render();
+    int width, height;
+    glfwGetFramebufferSize(app->GetWindow(), &width, &height);
+    glViewport(0, 0, width, height);
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
 int main()
 {
     spdlog::set_level(spdlog::level::debug);
@@ -140,6 +168,7 @@ int main()
 
     prepare();
     prepare_camera();
+    init_imgui(app);
 
     GL_CALL(glViewport(0, 0, width, height));
     GL_CALL(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
@@ -149,6 +178,7 @@ int main()
     {
         camera_control->Update();
         renderer->Render(meshes, camera, spot_light, directional_light, point_lights, ambient_light);
+        render_imgui(app);
     }
 
     app->Destroy();
