@@ -5,6 +5,12 @@ Geometry::Geometry()
 {
 }
 
+Geometry::Geometry(std::vector<Vertex> verteces, std::vector<unsigned int> indices)
+    : vertices_(verteces), indices_(indices)
+{
+    SetupVertices(vertices_, indices_);
+}
+
 Geometry::~Geometry()
 {
 }

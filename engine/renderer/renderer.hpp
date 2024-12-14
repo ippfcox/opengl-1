@@ -20,14 +20,6 @@ public:
     void SetClearColor(glm::vec3 clear_color);
 
     void Render(
-        const std::vector<Mesh *> &meshes,
-        Camera *camera,
-        SpotLight *spot_light,
-        DirectionalLight *directional_light,
-        const std::vector<PointLight *> point_lights,
-        AmbientLight *ambient_light);
-
-    void Render(
         Scene *scene,
         Camera *camera,
         SpotLight *spot_light,
@@ -35,6 +27,7 @@ public:
         const std::vector<PointLight *> point_lights,
         AmbientLight *ambient_light);
 
+private:
     void RenderObject(
         Object *object,
         Camera *camera,
@@ -43,7 +36,6 @@ public:
         const std::vector<PointLight *> point_lights,
         AmbientLight *ambient_light);
 
-private:
     std::unordered_map<MaterialType, Shader *> shader_map_;
     glm::vec3 clear_color_;
 };

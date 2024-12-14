@@ -13,6 +13,7 @@ class Geometry
 {
 public:
     Geometry();
+    Geometry(std::vector<Vertex> verteces, std::vector<unsigned int> indices);
     virtual ~Geometry();
 
     GLuint GetVAO();

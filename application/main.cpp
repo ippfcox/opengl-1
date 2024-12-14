@@ -5,6 +5,7 @@
 #include "camera/perspective_camera.hpp"
 #include "camera/trackball_camera_control.hpp"
 #include "camera/game_camera_control.hpp"
+#include "assimp_loader.hpp"
 #include "object/object.hpp"
 #include "object/mesh.hpp"
 #include "object/sphere.hpp"
@@ -36,31 +37,34 @@ glm::vec3 clear_color{0.0f};
 
 void prepare()
 {
+
     // renderer
     renderer = new Renderer();
 
     // meshes
-    auto geometry = new Cube(2.0f);
+    // auto geometry = new Cube(2.0f);
 
-    auto material = new PhongMaterial();
-    material->shiness = 40.0f;
-    material->diffuse = new Texture();
-    material->diffuse->InitByFilename("assets/textures/box.png");
-    material->specular_mask = new Texture();
-    material->specular_mask->InitByFilename("assets/textures/box_specular.png");
+    // auto material = new PhongMaterial();
+    // material->shiness = 40.0f;
+    // material->diffuse = new Texture();
+    // material->diffuse->InitByFilename("assets/textures/box.png");
+    // material->specular_mask = new Texture();
+    // material->specular_mask->InitByFilename("assets/textures/box_specular.png");
 
-    auto mesh = new Mesh(geometry, material);
+    // auto mesh = new Mesh(geometry, material);
 
-    auto geometry2 = new Sphere(0.1f);
-    auto material2 = new PureMaterial();
-    material2->color = {1.0f, 1.0f, 0.0f};
-    auto mesh2 = new Mesh(geometry2, material2);
-    mesh2->SetPosition({2.3f, 0.0f, 0.0f});
+    // auto geometry2 = new Sphere(0.1f);
+    // auto material2 = new PureMaterial();
+    // material2->color = {1.0f, 1.0f, 0.0f};
+    // auto mesh2 = new Mesh(geometry2, material2);
+    // mesh2->SetPosition({2.3f, 0.0f, 0.0f});
 
-    mesh->AddChild(mesh2);
+    // mesh->AddChild(mesh2);
 
     scene = new Scene();
-    scene->AddChild(mesh);
+    auto test = AssimpLoader::Load("assets/fbx/78824.fbx");
+    test->SetScale(glm::vec3(0.1f));
+    scene->AddChild(test);
 
     // light
     directional_light = new DirectionalLight();
@@ -103,7 +107,7 @@ void prepare()
     ambient_light = new AmbientLight();
     ambient_light->color = {0.2f, 0.2f, 0.2f};
     spot_light = new SpotLight();
-    spot_light->SetPosition(mesh2->GetPosition());
+    // spot_light->SetPosition(mesh2->GetPosition());
     spot_light->direction = {-1.0f, 0.0f, 0.0f};
     spot_light->inner_angle = 20.0f;
     spot_light->outer_angle = 30.0f;
