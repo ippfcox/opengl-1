@@ -1,6 +1,7 @@
 #include "object.hpp"
 
 Object::Object()
+    : type_(ObjectType::Object)
 {
 }
 
@@ -53,6 +54,11 @@ glm::mat4 Object::GetModelMatrix()
     return transform;
 }
 
+ObjectType Object::GetType() const
+{
+    return type_;
+}
+
 void Object::AddChild(Object *object)
 {
     auto iter = std::find(children_.begin(), children_.end(), object);
@@ -61,7 +67,7 @@ void Object::AddChild(Object *object)
         SPDLOG_WARN("add duplicate object");
         return;
     }
-    
+
     children_.push_back(object);
     object->parent_ = this;
 }

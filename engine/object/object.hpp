@@ -3,6 +3,13 @@
 #include <vector>
 #include "../common.hpp"
 
+enum class ObjectType
+{
+    Object,
+    Mesh,
+    Scene,
+};
+
 class Object
 {
 public:
@@ -17,6 +24,8 @@ public:
     void SetScale(glm::vec3 scale);
     glm::mat4 GetModelMatrix();
 
+    ObjectType GetType() const;
+
     void AddChild(Object *object);
     std::vector<Object *> GetChildren();
     Object *GetParent();
@@ -27,6 +36,8 @@ protected:
     float angle_y_{0.0f};
     float angle_z_{0.0f};
     glm::vec3 scale_{1.0f};
+
+    ObjectType type_;
 
     std::vector<Object *> children_{};
     Object *parent_;
