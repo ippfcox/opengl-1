@@ -12,12 +12,11 @@ aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/glad/src" SRC)
 add_library(${PROJECT_NAME} ${SRC})
 
 set(CMAKE_PREFIX_PATH
-
-    # "${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/Assimp/lib/cmake/assimp-5.4"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/assimp/lib/cmake/assimp-5.4"
     "${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/spdlog/lib/cmake/spdlog"
 )
 
-# find_package(assimp REQUIRED)
+find_package(assimp REQUIRED)
 find_package(spdlog REQUIRED)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -34,4 +33,5 @@ target_link_directories(${PROJECT_NAME} PRIVATE
 target_link_libraries(${PROJECT_NAME} PUBLIC
     spdlog::spdlog
     glfw3
+    assimp::assimp
 )

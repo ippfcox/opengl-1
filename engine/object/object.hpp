@@ -21,6 +21,10 @@ public:
     void SetRotateX(float angle_delta);
     void SetRotateY(float angle_delta);
     void SetRotateZ(float angle_delta);
+    void SetAngleX(float angle);
+    void SetAngleY(float angle);
+    void SetAngleZ(float angle);
+
     void SetScale(glm::vec3 scale);
     glm::mat4 GetModelMatrix();
 

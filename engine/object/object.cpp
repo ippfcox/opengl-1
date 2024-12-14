@@ -34,6 +34,21 @@ void Object::SetRotateZ(float angle_delta)
     angle_z_ += angle_delta;
 }
 
+void Object::SetAngleX(float angle)
+{
+    angle_x_ = angle;
+}
+
+void Object::SetAngleY(float angle)
+{
+    angle_y_ = angle;
+}
+
+void Object::SetAngleZ(float angle)
+{
+    angle_z_ = angle;
+}
+
 void Object::SetScale(glm::vec3 scale)
 {
     scale_ = scale;
