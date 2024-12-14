@@ -4,6 +4,7 @@
 #include "../../engine/common.hpp"
 #include "../../engine/object/object.hpp"
 #include "../../engine/object/mesh.hpp"
+#include "../../engine/texture.hpp"
 
 class AssimpLoader
 {
@@ -13,5 +14,6 @@ public:
 private:
     static void ProcessNode(aiNode *ai_node, Object *parent, const aiScene *ai_scene, const std::string &root_path);
     static Mesh *ProcessMesh(aiMesh *ai_mesh, const aiScene *ai_scene, const std::string &root_path);
+    static Texture *ProcessTexture(const aiMaterial *ai_material, aiTextureType ai_type, const aiScene *ai_scene, const std::string &root_path);
     static glm::mat4 aiMat4x4Toglmmat4(aiMatrix4x4 ai_mat4x4);
 };
