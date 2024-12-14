@@ -15,4 +15,8 @@ public:
     virtual ~Material();
 
     MaterialType type;
+
+    bool depth_test{true};
+    GLenum depth_func{GL_LESS};
+    bool depth_mask{true};
 };

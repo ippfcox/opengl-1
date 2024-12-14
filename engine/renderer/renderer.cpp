@@ -34,6 +34,7 @@ void Renderer::Render(
     // set state
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+    glDepthMask(GL_TRUE);
 
     // clear
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -62,8 +63,26 @@ void Renderer::RenderObject(
         case MaterialType::Phong:
         {
             auto material = dynamic_cast<PhongMaterial *>(mesh->material);
+            // depth
+            if (material->depth_test)
+            {
+                glEnable(GL_DEPTH_TEST);
+                glDepthFunc(material->depth_func);
+            }
+            else
+            {
+                glDisable(GL_DEPTH_TEST);
+            }
+            if (material->depth_mask)
+            {
+                glDepthMask(GL_TRUE);
+            }
+            else
+            {
+                glDepthMask(GL_FALSE);
+            }
             //   texture
-            material->diffuse->Bind();                     // bind texture to texture unit
+            material->diffuse->Bind();                                                // bind texture to texture unit
             shader->SetUniform("unif_diffuse_sampler", material->diffuse->GetUnit()); // bind texture sampler to texture unit
             // material->specular_mask->Bind(1);
             // shader->SetUniform("unif_specular_mask_sampler", 1);
