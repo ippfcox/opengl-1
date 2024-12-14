@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include "../object/scene.hpp"
 #include "../object/mesh.hpp"
 #include "../shader.hpp"
 #include "../../application/camera/camera.hpp" // [fixme] refactor needed
@@ -20,6 +21,22 @@ public:
 
     void Render(
         const std::vector<Mesh *> &meshes,
+        Camera *camera,
+        SpotLight *spot_light,
+        DirectionalLight *directional_light,
+        const std::vector<PointLight *> point_lights,
+        AmbientLight *ambient_light);
+
+    void Render(
+        Scene *scene,
+        Camera *camera,
+        SpotLight *spot_light,
+        DirectionalLight *directional_light,
+        const std::vector<PointLight *> point_lights,
+        AmbientLight *ambient_light);
+
+    void RenderObject(
+        Object *object,
         Camera *camera,
         SpotLight *spot_light,
         DirectionalLight *directional_light,

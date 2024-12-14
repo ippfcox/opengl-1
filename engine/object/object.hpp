@@ -40,5 +40,5 @@ protected:
     ObjectType type_;
 
     std::vector<Object *> children_{};
-    Object *parent_;
+    Object *parent_{nullptr};
 };

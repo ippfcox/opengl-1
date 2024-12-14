@@ -51,6 +51,8 @@ glm::mat4 Object::GetModelMatrix()
     transform = glm::rotate(transform, glm::radians(angle_z_), glm::vec3{0.0f, 0.0f, 1.0f});
     transform = glm::translate(glm::mat4(1.0f), world_position_) * transform;
 
+    if (parent_)
+        return parent_->GetModelMatrix() * transform;
     return transform;
 }
 

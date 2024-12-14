@@ -9,6 +9,7 @@
 #include "object/mesh.hpp"
 #include "object/sphere.hpp"
 #include "object/cube.hpp"
+#include "object/scene.hpp"
 #include "object/material/phong_material.hpp"
 #include "object/material/pure_material.hpp"
 #include "renderer/renderer.hpp"
@@ -22,7 +23,7 @@ constexpr int height = 600;
 constexpr char title[] = "hy";
 
 Renderer *renderer = nullptr;
-std::vector<Mesh *> meshes{};
+Scene *scene = nullptr;
 DirectionalLight *directional_light = nullptr;
 std::vector<PointLight *> point_lights{};
 AmbientLight *ambient_light = nullptr;
@@ -50,15 +51,16 @@ void prepare()
 
     auto mesh = new Mesh(geometry, material);
 
-    meshes.push_back(mesh);
-
     auto geometry2 = new Sphere(0.1f);
     auto material2 = new PureMaterial();
     material2->color = {1.0f, 1.0f, 0.0f};
     auto mesh2 = new Mesh(geometry2, material2);
     mesh2->SetPosition({2.3f, 0.0f, 0.0f});
 
-    meshes.push_back(mesh2);
+    mesh->AddChild(mesh2);
+
+    scene = new Scene();
+    scene->AddChild(mesh);
 
     // light
     directional_light = new DirectionalLight();
@@ -179,9 +181,11 @@ int main()
 
     while (app->Update())
     {
+        scene->SetRotateY(0.1f);
+
         camera_control->Update();
         renderer->SetClearColor(clear_color);
-        renderer->Render(meshes, camera, spot_light, directional_light, point_lights, ambient_light);
+        renderer->Render(scene, camera, spot_light, directional_light, point_lights, ambient_light);
         render_imgui(app);
     }
 
