@@ -3,6 +3,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
+std::unordered_map<std::string, Texture *> Texture::cache_{};
+
 Texture::Texture()
 {
 }
@@ -13,27 +15,101 @@ Texture::~Texture()
         glDeleteBuffers(1, &texture_);
 }
 
+Texture *Texture::CreateByFilename(const std::string &path)
+{
+    if (cache_.contains(path))
+        return cache_[path];
+
+    auto texture = new Texture();
+    texture->InitByFilename(path);
+
+    cache_[path] = texture;
+    return texture;
+}
+
+Texture *Texture::CreateByMemoryImage(const void *image_data, int size, const std::string &cache_key)
+{
+    if (cache_.contains(cache_key))
+        return cache_[cache_key];
+
+    auto texture = new Texture();
+    texture->InitByMemoryImage(image_data, size);
+
+    cache_[cache_key] = texture;
+    return texture;
+}
+
+Texture *Texture::CreateByMemoryRGBA(const void *rgba_data, int width, int height, const std::string &cache_key)
+{
+    if (cache_.contains(cache_key))
+        return cache_[cache_key];
+
+    auto texture = new Texture();
+    texture->InitByMemoryRGBA(rgba_data, width, height);
+
+    cache_[cache_key] = texture;
+    return texture;
+}
+
 bool Texture::InitByFilename(const std::string &path)
 {
     stbi_set_flip_vertically_on_load(1);
     int channels;
-    stbi_uc *data = stbi_load(path.c_str(), &width_, &height_, &channels, STBI_rgb_alpha);
+    stbi_uc *rgba_data = stbi_load(path.c_str(), &width_, &height_, &channels, STBI_rgb_alpha);
+    if (!rgba_data)
+    {
+        SPDLOG_ERROR("stbi_load {} failed: {}", path, stbi_failure_reason());
+        return false;
+    }
+
+    InitByMemoryRGBA(rgba_data, width_, height_);
+
+    stbi_image_free(rgba_data);
+
+    return true;
+}
+
+bool Texture::InitByMemoryImage(const void *image_data, int size)
+{
+    stbi_set_flip_vertically_on_load(1);
+    int channels;
+    stbi_uc *rgba_data = stbi_load_from_memory(reinterpret_cast<const stbi_uc *>(image_data), size, &width_, &height_, &channels, STBI_rgb_alpha);
+
+    InitByMemoryRGBA(rgba_data, width_, height_);
+
+    stbi_image_free(rgba_data);
+
+    return true;
+}
+
+bool Texture::InitByMemoryRGBA(const void *rgba_data, int width, int height)
+{
+    width_ = width;
+    height_ = height;
 
     GL_CALL(glGenTextures(1, &texture_));
     GL_CALL(glBindTexture(GL_TEXTURE_2D, texture_));
-    GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width_, height_, 0, GL_RGBA, GL_UNSIGNED_BYTE, data));
+    GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width_, height_, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba_data));
     GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
     GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
     GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
     GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
 
-    stbi_image_free(data);
-
     return true;
 }
 
-void Texture::Bind(int texture_unit)
+void Texture::SetUnit(int texture_unit)
 {
-    GL_CALL(glActiveTexture(GL_TEXTURE0 + texture_unit));
+    texture_unit_ = texture_unit;
+}
+
+int Texture::GetUnit()
+{
+    return texture_unit_;
+}
+
+void Texture::Bind()
+{
+    GL_CALL(glActiveTexture(GL_TEXTURE0 + texture_unit_));
     GL_CALL(glBindTexture(GL_TEXTURE_2D, texture_));
 }

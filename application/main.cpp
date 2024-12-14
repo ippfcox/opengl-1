@@ -62,7 +62,7 @@ void prepare()
     // mesh->AddChild(mesh2);
 
     scene = new Scene();
-    auto test = AssimpLoader::Load("assets/fbx/78824.fbx");
+    auto test = AssimpLoader::Load("assets/fbx/phoenix-bird/fly.fbx");
     test->SetScale(glm::vec3(0.1f));
     scene->AddChild(test);
 

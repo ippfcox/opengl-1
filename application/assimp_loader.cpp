@@ -14,12 +14,12 @@ Object *AssimpLoader::Load(const std::string path)
 
     Object *root = new Object();
 
-    ProcessNode(scene->mRootNode, root, scene);
+    ProcessNode(scene->mRootNode, root, scene, path.substr(0, path.find_last_of('/')));
 
     return root;
 }
 
-void AssimpLoader::ProcessNode(aiNode *ai_node, Object *parent, const aiScene *scene)
+void AssimpLoader::ProcessNode(aiNode *ai_node, Object *parent, const aiScene *ai_scene, const std::string &root_path)
 {
     Object *node = new Object();
     parent->AddChild(node);
@@ -37,16 +37,16 @@ void AssimpLoader::ProcessNode(aiNode *ai_node, Object *parent, const aiScene *s
     // so...node(Object) and mesh are all its child? [fixme] please!
     for (int i = 0; i < ai_node->mNumMeshes; ++i)
     {
-        node->AddChild(ProcessMesh(scene->mMeshes[ai_node->mMeshes[i]]));
+        node->AddChild(ProcessMesh(ai_scene->mMeshes[ai_node->mMeshes[i]], ai_scene, root_path));
     }
 
     for (int i = 0; i < ai_node->mNumChildren; ++i)
     {
-        ProcessNode(ai_node->mChildren[i], node, scene);
+        ProcessNode(ai_node->mChildren[i], node, ai_scene, root_path);
     }
 }
 
-Mesh *AssimpLoader::ProcessMesh(aiMesh *ai_mesh)
+Mesh *AssimpLoader::ProcessMesh(aiMesh *ai_mesh, const aiScene *ai_scene, const std::string &root_path)
 {
     std::vector<Vertex> vertices{};
     for (int i = 0; i < ai_mesh->mNumVertices; ++i)
@@ -70,9 +70,38 @@ Mesh *AssimpLoader::ProcessMesh(aiMesh *ai_mesh)
 
     auto geometry = new Geometry(vertices, indices);
     auto material = new PhongMaterial();
-    material->diffuse = new Texture();
-    material->diffuse->InitByFilename("assets/textures/box.png");
     material->shiness = 32.0f;
+
+    if (ai_mesh->mMaterialIndex >= 0)
+    {
+        auto ai_material = ai_scene->mMaterials[ai_mesh->mMaterialIndex];
+        aiString ai_rel_path;
+        ai_material->GetTexture(aiTextureType_DIFFUSE, 0, &ai_rel_path);
+
+        auto ai_texture = ai_scene->GetEmbeddedTexture(ai_rel_path.C_Str());
+        if (ai_texture)
+        {
+            // compressed image, jpg/png...
+            if (ai_texture->mHeight == 0)
+            {
+                material->diffuse = Texture::CreateByMemoryImage(ai_texture->pcData, ai_texture->mWidth, ai_texture->mFilename.C_Str());
+            }
+            else // raw rgb [todo] pixel format should be handled
+            {
+                material->diffuse = Texture::CreateByMemoryRGBA(ai_texture->pcData, ai_texture->mWidth, ai_texture->mHeight, ai_texture->mFilename.C_Str());
+            }
+        }
+        else
+        {
+            material->diffuse = Texture::CreateByFilename(root_path + "/" + ai_rel_path.C_Str());
+        }
+    }
+    else
+    {
+        material->diffuse = new Texture();
+        material->diffuse->InitByFilename("assets/textures/cloud.jpg"); // [todo] use default texture
+    }
+    material->diffuse->SetUnit(0);
 
     return new Mesh(geometry, material);
 }
