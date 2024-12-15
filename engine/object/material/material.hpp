@@ -5,7 +5,7 @@
 enum class MaterialType
 {
     Phong,
-    Pure,
+    Color,
     Depth,
 };
 

@@ -12,7 +12,7 @@
 #include "object/cube.hpp"
 #include "object/scene.hpp"
 #include "object/material/phong_material.hpp"
-#include "object/material/pure_material.hpp"
+#include "object/material/color_material.hpp"
 #include "object/material/depth_material.hpp"
 #include "renderer/renderer.hpp"
 #include "imgui.h"
@@ -56,7 +56,7 @@ void prepare()
     auto mesh = new Mesh(geometry, material);
 
     auto geometry2 = new Sphere(0.1f);
-    auto material2 = new PureMaterial();
+    auto material2 = new ColorMaterial();
     material2->color = {1.0f, 1.0f, 0.0f};
     auto mesh2 = new Mesh(geometry2, material2);
     mesh2->SetPosition({2.3f, 0.0f, 0.0f});

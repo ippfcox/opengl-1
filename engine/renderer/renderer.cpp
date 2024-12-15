@@ -1,6 +1,6 @@
 #include "renderer.hpp"
 #include "../object/material/phong_material.hpp"
-#include "../object/material/pure_material.hpp"
+#include "../object/material/color_material.hpp"
 #include "../object/material/depth_material.hpp"
 #include "../wrapper.hpp"
 
@@ -10,9 +10,9 @@ Renderer::Renderer()
     auto phong_shader = new Shader();
     phong_shader->InitByFilename("assets/shaders/phong.vs", "assets/shaders/phong.fs");
     shader_map_[MaterialType::Phong] = phong_shader;
-    auto pure_shader = new Shader();
-    pure_shader->InitByFilename("assets/shaders/pure.vs", "assets/shaders/pure.fs");
-    shader_map_[MaterialType::Pure] = pure_shader;
+    auto color_shader = new Shader();
+    color_shader->InitByFilename("assets/shaders/color.vs", "assets/shaders/color.fs");
+    shader_map_[MaterialType::Color] = color_shader;
     auto depth_shader = new Shader();
     depth_shader->InitByFilename("assets/shaders/depth.vs", "assets/shaders/depth.fs");
     shader_map_[MaterialType::Depth] = depth_shader;
@@ -139,11 +139,11 @@ void Renderer::RenderObject(
             shader->SetUniform("unif_camera_position", camera->position);
         }
         break;
-        case MaterialType::Pure:
+        case MaterialType::Color:
         {
-            auto material = dynamic_cast<PureMaterial *>(mesh->material);
+            auto material = dynamic_cast<ColorMaterial *>(mesh->material);
             //   color
-            shader->SetUniform("unif_point_light_color", material->color);
+            shader->SetUniform("unif_color", material->color);
             //   mvp
             shader->SetUniform("unif_model", mesh->GetModelMatrix());
             shader->SetUniform("unif_view", camera->GetViewMatrix());
