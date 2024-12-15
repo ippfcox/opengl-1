@@ -44,50 +44,10 @@ void prepare()
     renderer = new Renderer();
 
     scene = new Scene();
+    auto nanosuit = AssimpLoader::Load("assets/fbx/nanosuit/nanosuit.obj");
+    nanosuit->SetScale(glm::vec3(0.1f));
 
-    auto geometry = new Cube(1.0f);
-    auto material1 = new PhongMaterial();
-    material1->shiness = 40.0f;
-    material1->diffuse = new Texture();
-    material1->diffuse->InitByFilename("assets/textures/box.png");
-    material1->specular_mask = new Texture();
-    material1->specular_mask->InitByFilename("assets/textures/box_specular.png");
-    material1->enable_stencil_test = true;
-    material1->stencil_op_s_pass_z_pass = GL_REPLACE;
-    material1->stencil_func_ref = 1;
-    auto material2 = new ColorMaterial();
-    material2->color = {1.0f, 1.0f, 1.0f};
-    material2->enable_stencil_test = true;
-    material2->stencil_mask = 0x00;
-    material2->stencil_func_func = GL_NOTEQUAL;
-    material2->stencil_func_ref = 1;
-    material2->enable_depth_test = false;
-
-    auto cube1 = new Mesh(geometry, material1);
-    auto cube2 = new Mesh(geometry, material2);
-    auto cube3 = new Mesh(geometry, material1);
-    auto cube4 = new Mesh(geometry, material2);
-    cube2->SetScale({1.1f, 1.1f, 1.1f});
-    cube3->SetPosition({0.5f, 0.5f, 0.5f});
-    cube4->SetPosition({0.5f, 0.5f, 0.5f});
-    cube4->SetScale({1.1f, 1.1f, 1.1f});
-
-    auto geometry_plane = new Plane(8, 8);
-    auto material_plane = new PhongMaterial();
-    material_plane->diffuse = new Texture();
-    // material_plane->diffuse->InitByFilename("assets/textures/blending_transparent_window.png");
-    material_plane->diffuse->InitByFilename("assets/textures/earthmap1k.jpg");
-    material_plane->shiness = 40.0f;
-    material_plane->enable_blend = true;
-    material_plane->opacity = 0.5f;
-    auto plane = new Mesh(geometry_plane, material_plane);
-    plane->SetPosition({0.0f, 0.0f, 5.0f});
-
-    scene->AddChild(cube1);
-    scene->AddChild(cube2);
-    scene->AddChild(cube3);
-    scene->AddChild(cube4);
-    scene->AddChild(plane);
+    scene->AddChild(nanosuit);
 
     // light
     directional_light = new DirectionalLight();
