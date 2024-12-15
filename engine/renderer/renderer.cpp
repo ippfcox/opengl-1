@@ -1,16 +1,21 @@
 #include "renderer.hpp"
 #include "../object/material/phong_material.hpp"
 #include "../object/material/pure_material.hpp"
+#include "../object/material/depth_material.hpp"
 #include "../wrapper.hpp"
 
 Renderer::Renderer()
 {
+    // [todo] lazy load
     auto phong_shader = new Shader();
     phong_shader->InitByFilename("assets/shaders/phong.vs", "assets/shaders/phong.fs");
     shader_map_[MaterialType::Phong] = phong_shader;
     auto pure_shader = new Shader();
     pure_shader->InitByFilename("assets/shaders/pure.vs", "assets/shaders/pure.fs");
     shader_map_[MaterialType::Pure] = pure_shader;
+    auto depth_shader = new Shader();
+    depth_shader->InitByFilename("assets/shaders/depth.vs", "assets/shaders/depth.fs");
+    shader_map_[MaterialType::Depth] = depth_shader;
 }
 
 Renderer::~Renderer()
@@ -53,6 +58,25 @@ void Renderer::RenderObject(
     if (object->GetType() == ObjectType::Mesh)
     {
         auto mesh = dynamic_cast<Mesh *>(object);
+        // depth
+        if (mesh->material->depth_test)
+        {
+            glEnable(GL_DEPTH_TEST);
+            glDepthFunc(mesh->material->depth_func);
+        }
+        else
+        {
+            glDisable(GL_DEPTH_TEST);
+        }
+        if (mesh->material->depth_mask)
+        {
+            glDepthMask(GL_TRUE);
+        }
+        else
+        {
+            glDepthMask(GL_FALSE);
+        }
+
         Shader *shader = shader_map_[mesh->material->type]; // checkerror
         // use shader
         shader->Use();
@@ -63,24 +87,7 @@ void Renderer::RenderObject(
         case MaterialType::Phong:
         {
             auto material = dynamic_cast<PhongMaterial *>(mesh->material);
-            // depth
-            if (material->depth_test)
-            {
-                glEnable(GL_DEPTH_TEST);
-                glDepthFunc(material->depth_func);
-            }
-            else
-            {
-                glDisable(GL_DEPTH_TEST);
-            }
-            if (material->depth_mask)
-            {
-                glDepthMask(GL_TRUE);
-            }
-            else
-            {
-                glDepthMask(GL_FALSE);
-            }
+
             //   texture
             material->diffuse->Bind();                                                // bind texture to texture unit
             shader->SetUniform("unif_diffuse_sampler", material->diffuse->GetUnit()); // bind texture sampler to texture unit
@@ -124,6 +131,16 @@ void Renderer::RenderObject(
             //   color
             shader->SetUniform("unif_point_light_color", material->color);
             //   mvp
+            shader->SetUniform("unif_model", mesh->GetModelMatrix());
+            shader->SetUniform("unif_view", camera->GetViewMatrix());
+            shader->SetUniform("unif_projection", camera->GetProjectionMatrix());
+        }
+        break;
+        case MaterialType::Depth:
+        {
+            auto material = dynamic_cast<DepthMaterial *>(mesh->material);
+            shader->SetUniform("unif_near", camera->near_);
+            shader->SetUniform("unif_far", camera->far_);
             shader->SetUniform("unif_model", mesh->GetModelMatrix());
             shader->SetUniform("unif_view", camera->GetViewMatrix());
             shader->SetUniform("unif_projection", camera->GetProjectionMatrix());

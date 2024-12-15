@@ -22,10 +22,10 @@ public:
     void Bind();
 
 private:
-    GLuint texture_;
-    int width_;
-    int height_;
-    int texture_unit_;
+    GLuint texture_{0};
+    int width_{0};
+    int height_{0};
+    int texture_unit_{0};
 
     static std::unordered_map<std::string, Texture *> cache_;
 };

@@ -13,6 +13,7 @@
 #include "object/scene.hpp"
 #include "object/material/phong_material.hpp"
 #include "object/material/pure_material.hpp"
+#include "object/material/depth_material.hpp"
 #include "renderer/renderer.hpp"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -42,8 +43,9 @@ void prepare()
     renderer = new Renderer();
 
     // meshes
-    // auto geometry = new Cube(2.0f);
+    auto geometry = new Cube(5.0f);
 
+    auto material = new DepthMaterial();
     // auto material = new PhongMaterial();
     // material->shiness = 40.0f;
     // material->diffuse = new Texture();
@@ -51,20 +53,22 @@ void prepare()
     // material->specular_mask = new Texture();
     // material->specular_mask->InitByFilename("assets/textures/box_specular.png");
 
-    // auto mesh = new Mesh(geometry, material);
+    auto mesh = new Mesh(geometry, material);
 
-    // auto geometry2 = new Sphere(0.1f);
-    // auto material2 = new PureMaterial();
-    // material2->color = {1.0f, 1.0f, 0.0f};
-    // auto mesh2 = new Mesh(geometry2, material2);
-    // mesh2->SetPosition({2.3f, 0.0f, 0.0f});
+    auto geometry2 = new Sphere(0.1f);
+    auto material2 = new PureMaterial();
+    material2->color = {1.0f, 1.0f, 0.0f};
+    auto mesh2 = new Mesh(geometry2, material2);
+    mesh2->SetPosition({2.3f, 0.0f, 0.0f});
 
-    // mesh->AddChild(mesh2);
+    mesh->AddChild(mesh2);
 
     scene = new Scene();
-    auto test = AssimpLoader::Load("assets/fbx/phoenix-bird/fly.fbx");
-    test->SetScale(glm::vec3(0.1f));
-    scene->AddChild(test);
+    // auto test = AssimpLoader::Load("assets/fbx/phoenix-bird/fly.fbx");
+    // test->SetScale(glm::vec3(0.1f));
+    // scene->AddChild(test);
+
+    scene->AddChild(mesh);
 
     // light
     directional_light = new DirectionalLight();
@@ -117,7 +121,7 @@ void prepare()
 
 void prepare_camera()
 {
-    camera = new PerspectiveCamera(60.0f, (float)width / height, 0.1f, 1000.0f);
+    camera = new PerspectiveCamera(60.0f, (float)width / height, 0.1f, 50.0f);
     // camera = new OrthographicCamera(-6.0f, 6.0f, -6.0f, 6.0f, -6.0f, 6.0f);
     // camera_control = new TrackballCameraControl();
     camera_control = new GameCameraControl();

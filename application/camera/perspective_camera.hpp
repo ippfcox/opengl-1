@@ -15,6 +15,4 @@ public:
 private:
     float fovy_ = 0.0f;
     float aspect_ = 0.0f;
-    float near_ = 0.0f;
-    float far_ = 0.0f;
 };
