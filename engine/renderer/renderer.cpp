@@ -41,6 +41,9 @@ void Renderer::Render(
     glDepthFunc(GL_LESS);
     glDepthMask(GL_TRUE);
 
+    glDisable(GL_POLYGON_OFFSET_FILL);
+    glDisable(GL_POLYGON_OFFSET_LINE);
+
     // clear
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -59,7 +62,7 @@ void Renderer::RenderObject(
     {
         auto mesh = dynamic_cast<Mesh *>(object);
         // depth
-        if (mesh->material->depth_test)
+        if (mesh->material->enable_depth_test)
         {
             glEnable(GL_DEPTH_TEST);
             glDepthFunc(mesh->material->depth_func);
@@ -68,13 +71,24 @@ void Renderer::RenderObject(
         {
             glDisable(GL_DEPTH_TEST);
         }
-        if (mesh->material->depth_mask)
+        if (mesh->material->enable_depth_write)
         {
             glDepthMask(GL_TRUE);
         }
         else
         {
             glDepthMask(GL_FALSE);
+        }
+        // polygon_offset
+        if (mesh->material->enable_polygon_offset)
+        {
+            glEnable(mesh->material->polygen_offset_type);
+            glPolygonOffset(mesh->material->polygon_offset_factor, mesh->material->polygon_offset_unit);
+        }
+        else
+        {
+            glDisable(GL_POLYGON_OFFSET_FILL);
+            glDisable(GL_POLYGON_OFFSET_LINE);
         }
 
         Shader *shader = shader_map_[mesh->material->type]; // checkerror
