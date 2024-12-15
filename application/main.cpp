@@ -10,6 +10,7 @@
 #include "object/mesh.hpp"
 #include "object/sphere.hpp"
 #include "object/cube.hpp"
+#include "object/plane.hpp"
 #include "object/scene.hpp"
 #include "object/material/phong_material.hpp"
 #include "object/material/color_material.hpp"
@@ -44,7 +45,7 @@ void prepare()
 
     scene = new Scene();
 
-    auto geometry = new Cube(4.0f);
+    auto geometry = new Cube(1.0f);
     auto material1 = new PhongMaterial();
     material1->shiness = 40.0f;
     material1->diffuse = new Texture();
@@ -66,15 +67,27 @@ void prepare()
     auto cube2 = new Mesh(geometry, material2);
     auto cube3 = new Mesh(geometry, material1);
     auto cube4 = new Mesh(geometry, material2);
-    cube2->SetScale({1.2f, 1.2f, 1.2f});
-    cube3->SetPosition({2.0f, 2.0f, 2.0f});
-    cube4->SetPosition({2.0f, 2.0f, 2.0f});
-    cube4->SetScale({1.2f, 1.2f, 1.2f});
+    cube2->SetScale({1.1f, 1.1f, 1.1f});
+    cube3->SetPosition({0.5f, 0.5f, 0.5f});
+    cube4->SetPosition({0.5f, 0.5f, 0.5f});
+    cube4->SetScale({1.1f, 1.1f, 1.1f});
+
+    auto geometry_plane = new Plane(8, 8);
+    auto material_plane = new PhongMaterial();
+    material_plane->diffuse = new Texture();
+    // material_plane->diffuse->InitByFilename("assets/textures/blending_transparent_window.png");
+    material_plane->diffuse->InitByFilename("assets/textures/earthmap1k.jpg");
+    material_plane->shiness = 40.0f;
+    material_plane->enable_blend = true;
+    material_plane->opacity = 0.5f;
+    auto plane = new Mesh(geometry_plane, material_plane);
+    plane->SetPosition({0.0f, 0.0f, 5.0f});
 
     scene->AddChild(cube1);
     scene->AddChild(cube2);
     scene->AddChild(cube3);
     scene->AddChild(cube4);
+    scene->AddChild(plane);
 
     // light
     directional_light = new DirectionalLight();

@@ -34,4 +34,9 @@ public:
     GLenum stencil_func_func{GL_ALWAYS};
     GLenum stencil_func_ref{0};
     GLenum stencil_func_mask{0xFF};
+
+    bool enable_blend{false};
+    GLenum blend_src_factor{GL_SRC_ALPHA};
+    GLenum blend_dst_factor{GL_ONE_MINUS_SRC_ALPHA};
+    float opacity{1.0f};
 };

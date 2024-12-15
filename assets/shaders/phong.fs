@@ -42,6 +42,7 @@ uniform SpotLight unif_spot_light;
 uniform PointLight unif_point_lights[POINT_LIGHT_NUM];
 
 uniform float unif_specular_shiness;
+uniform float unif_opacity;
 uniform vec3 unif_ambient_color;
 uniform vec3 unif_camera_position;
 
@@ -104,7 +105,7 @@ vec3 calculate_point_light(PointLight light, vec3 normal_n, vec3 view_direction_
 void main()
 {
     // light common
-    vec3 object_color = texture(unif_diffuse_sampler, frag_uv).rgb;
+    vec4 object_color = texture(unif_diffuse_sampler, frag_uv);
     vec3 frag_normal_n = normalize(frag_normal);
     vec3 view_direction_n = normalize(frag_world_position - unif_camera_position);
 
@@ -116,11 +117,11 @@ void main()
         final_color += calculate_point_light(unif_point_lights[i], frag_normal_n, view_direction_n);
     }
     
-    vec3 ambient_color = unif_ambient_color * object_color;
+    vec3 ambient_color = unif_ambient_color * object_color.rgb;
     
     final_color += ambient_color;
 
     // debug
 
-    FragColor = vec4(final_color, 1.0);
+    FragColor = vec4(final_color, unif_opacity * object_color.a);
 }

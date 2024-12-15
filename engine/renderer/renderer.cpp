@@ -36,17 +36,19 @@ void Renderer::Render(
     const std::vector<PointLight *> point_lights,
     AmbientLight *ambient_light)
 {
-    // set state
+    // default depth test
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     glDepthMask(GL_TRUE);
-
+    // default polygon offset
     glDisable(GL_POLYGON_OFFSET_FILL);
     glDisable(GL_POLYGON_OFFSET_LINE);
-
+    // default stencil test
     glEnable(GL_STENCIL_TEST);
     glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
     glStencilMask(0xFF);
+    // default color blend
+    glDisable(GL_BLEND);
 
     // clear
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -68,6 +70,7 @@ void Renderer::RenderObject(
         SetDepthState(mesh->material);
         SetPolygonOffsetState(mesh->material);
         SetStencilState(mesh->material);
+        SetBlendState(mesh->material);
 
         Shader *shader = shader_map_[mesh->material->type]; // checkerror
         // use shader
@@ -112,6 +115,7 @@ void Renderer::RenderObject(
             shader->SetUniform("unif_directional_light.specular_intensity", directional_light->specular_intensity);
             shader->SetUniform("unif_directional_light.direction", directional_light->direction);
             shader->SetUniform("unif_specular_shiness", material->shiness);
+            shader->SetUniform("unif_opacity", material->opacity);
             shader->SetUniform("unif_ambient_color", ambient_light->color);
             //   camera
             shader->SetUniform("unif_camera_position", camera->position);
@@ -208,5 +212,18 @@ void Renderer::SetStencilState(Material *material)
     else
     {
         glDisable(GL_STENCIL_TEST);
+    }
+}
+
+void Renderer::SetBlendState(Material *material)
+{
+    if (material->enable_blend)
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(material->blend_src_factor, material->blend_dst_factor);
+    }
+    else
+    {
+        glDisable(GL_BLEND);
     }
 }

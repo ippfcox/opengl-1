@@ -38,6 +38,7 @@ private:
     void SetDepthState(Material *material);
     void SetPolygonOffsetState(Material *material);
     void SetStencilState(Material *material);
+    void SetBlendState(Material *material);
 
     std::unordered_map<MaterialType, Shader *> shader_map_;
     glm::vec3 clear_color_;
