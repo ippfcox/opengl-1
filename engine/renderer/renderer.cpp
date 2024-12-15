@@ -44,8 +44,12 @@ void Renderer::Render(
     glDisable(GL_POLYGON_OFFSET_FILL);
     glDisable(GL_POLYGON_OFFSET_LINE);
 
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    glStencilMask(0xFF);
+
     // clear
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     RenderObject(scene, camera, spot_light, directional_light, point_lights, ambient_light);
 }
@@ -61,35 +65,9 @@ void Renderer::RenderObject(
     if (object->GetType() == ObjectType::Mesh)
     {
         auto mesh = dynamic_cast<Mesh *>(object);
-        // depth
-        if (mesh->material->enable_depth_test)
-        {
-            glEnable(GL_DEPTH_TEST);
-            glDepthFunc(mesh->material->depth_func);
-        }
-        else
-        {
-            glDisable(GL_DEPTH_TEST);
-        }
-        if (mesh->material->enable_depth_write)
-        {
-            glDepthMask(GL_TRUE);
-        }
-        else
-        {
-            glDepthMask(GL_FALSE);
-        }
-        // polygon_offset
-        if (mesh->material->enable_polygon_offset)
-        {
-            glEnable(mesh->material->polygen_offset_type);
-            glPolygonOffset(mesh->material->polygon_offset_factor, mesh->material->polygon_offset_unit);
-        }
-        else
-        {
-            glDisable(GL_POLYGON_OFFSET_FILL);
-            glDisable(GL_POLYGON_OFFSET_LINE);
-        }
+        SetDepthState(mesh->material);
+        SetPolygonOffsetState(mesh->material);
+        SetStencilState(mesh->material);
 
         Shader *shader = shader_map_[mesh->material->type]; // checkerror
         // use shader
@@ -175,8 +153,60 @@ void Renderer::RenderObject(
         // shader->End();
     }
 
+    int index = 0;
     for (auto child : object->GetChildren())
     {
         RenderObject(child, camera, spot_light, directional_light, point_lights, ambient_light);
+        index++;
+    }
+}
+
+void Renderer::SetDepthState(Material *material)
+{
+    if (material->enable_depth_test)
+    {
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(material->depth_func);
+    }
+    else
+    {
+        glDisable(GL_DEPTH_TEST);
+    }
+    if (material->enable_depth_write)
+    {
+        glDepthMask(GL_TRUE);
+    }
+    else
+    {
+        glDepthMask(GL_FALSE);
+    }
+}
+
+void Renderer::SetPolygonOffsetState(Material *material)
+{
+    if (material->enable_polygon_offset)
+    {
+        glEnable(material->polygen_offset_type);
+        glPolygonOffset(material->polygon_offset_factor, material->polygon_offset_unit);
+    }
+    else
+    {
+        glDisable(GL_POLYGON_OFFSET_FILL);
+        glDisable(GL_POLYGON_OFFSET_LINE);
+    }
+}
+
+void Renderer::SetStencilState(Material *material)
+{
+    if (material->enable_stencil_test)
+    {
+        glEnable(GL_STENCIL_TEST);
+        glStencilOp(material->stencil_op_s_fail, material->stencil_op_s_pass_z_fail, material->stencil_op_s_pass_z_pass);
+        glStencilMask(material->stencil_mask);
+        glStencilFunc(material->stencil_func_func, material->stencil_func_ref, material->stencil_func_mask);
+    }
+    else
+    {
+        glDisable(GL_STENCIL_TEST);
     }
 }

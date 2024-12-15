@@ -35,6 +35,9 @@ private:
         DirectionalLight *directional_light,
         const std::vector<PointLight *> point_lights,
         AmbientLight *ambient_light);
+    void SetDepthState(Material *material);
+    void SetPolygonOffsetState(Material *material);
+    void SetStencilState(Material *material);
 
     std::unordered_map<MaterialType, Shader *> shader_map_;
     glm::vec3 clear_color_;

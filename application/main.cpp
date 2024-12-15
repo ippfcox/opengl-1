@@ -42,33 +42,39 @@ void prepare()
     // renderer
     renderer = new Renderer();
 
-    // meshes
-    auto geometry = new Cube(5.0f);
-
-    auto material = new DepthMaterial();
-    // auto material = new PhongMaterial();
-    // material->shiness = 40.0f;
-    // material->diffuse = new Texture();
-    // material->diffuse->InitByFilename("assets/textures/box.png");
-    // material->specular_mask = new Texture();
-    // material->specular_mask->InitByFilename("assets/textures/box_specular.png");
-
-    auto mesh = new Mesh(geometry, material);
-
-    auto geometry2 = new Sphere(0.1f);
-    auto material2 = new ColorMaterial();
-    material2->color = {1.0f, 1.0f, 0.0f};
-    auto mesh2 = new Mesh(geometry2, material2);
-    mesh2->SetPosition({2.3f, 0.0f, 0.0f});
-
-    mesh->AddChild(mesh2);
-
     scene = new Scene();
-    // auto test = AssimpLoader::Load("assets/fbx/phoenix-bird/fly.fbx");
-    // test->SetScale(glm::vec3(0.1f));
-    // scene->AddChild(test);
 
-    scene->AddChild(mesh);
+    auto geometry = new Cube(4.0f);
+    auto material1 = new PhongMaterial();
+    material1->shiness = 40.0f;
+    material1->diffuse = new Texture();
+    material1->diffuse->InitByFilename("assets/textures/box.png");
+    material1->specular_mask = new Texture();
+    material1->specular_mask->InitByFilename("assets/textures/box_specular.png");
+    material1->enable_stencil_test = true;
+    material1->stencil_op_s_pass_z_pass = GL_REPLACE;
+    material1->stencil_func_ref = 1;
+    auto material2 = new ColorMaterial();
+    material2->color = {1.0f, 1.0f, 1.0f};
+    material2->enable_stencil_test = true;
+    material2->stencil_mask = 0x00;
+    material2->stencil_func_func = GL_NOTEQUAL;
+    material2->stencil_func_ref = 1;
+    material2->enable_depth_test = false;
+
+    auto cube1 = new Mesh(geometry, material1);
+    auto cube2 = new Mesh(geometry, material2);
+    auto cube3 = new Mesh(geometry, material1);
+    auto cube4 = new Mesh(geometry, material2);
+    cube2->SetScale({1.2f, 1.2f, 1.2f});
+    cube3->SetPosition({2.0f, 2.0f, 2.0f});
+    cube4->SetPosition({2.0f, 2.0f, 2.0f});
+    cube4->SetScale({1.2f, 1.2f, 1.2f});
+
+    scene->AddChild(cube1);
+    scene->AddChild(cube2);
+    scene->AddChild(cube3);
+    scene->AddChild(cube4);
 
     // light
     directional_light = new DirectionalLight();
@@ -189,7 +195,7 @@ int main()
 
     while (app->Update())
     {
-        scene->SetRotateY(0.1f);
+        // scene->SetRotateY(0.1f);
 
         camera_control->Update();
         renderer->SetClearColor(clear_color);
