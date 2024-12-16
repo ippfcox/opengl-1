@@ -47,7 +47,29 @@ void prepare()
     auto nanosuit = AssimpLoader::Load("assets/fbx/nanosuit/nanosuit.obj");
     nanosuit->SetScale(glm::vec3(0.1f));
 
+    auto geometry1 = new Plane(2, 2);
+    auto material1 = new ColorMaterial({1.0, 0.0, 1.0, 1.0});
+    material1->enable_blend = true;
+    material1->opacity = 0.8;
+    auto plane1 = new Mesh(geometry1, material1);
+    plane1->SetPosition({0.0f, 0.0f, 3.0f});
+
+    auto geometry2 = new Plane(2, 2);
+    auto material2 = new ColorMaterial({0.0, 1.0, 0.0, 1.0});
+    material2->enable_blend = true;
+    material2->opacity = 0.4;
+    auto plane2 = new Mesh(geometry2, material2);
+    plane2->SetPosition({0.0f, 0.0f, 5.0f});
+
+    auto geometry3 = new Plane(2, 2);
+    auto material3 = new ColorMaterial({0.0, 0.0, 0.0, 1.0});
+    auto plane3 = new Mesh(geometry3, material3);
+    plane3->SetPosition({0.0f, 0.0f, 7.0f});
+
     scene->AddChild(nanosuit);
+    scene->AddChild(plane1);
+    scene->AddChild(plane2);
+    scene->AddChild(plane3);
 
     // light
     directional_light = new DirectionalLight();

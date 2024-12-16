@@ -54,7 +54,7 @@ void Object::SetScale(glm::vec3 scale)
     scale_ = scale;
 }
 
-glm::mat4 Object::GetModelMatrix()
+glm::mat4 Object::GetModelMatrix() const
 {
     // scale -> rotate (x(pitch) -> y(yaw) -> z(roll)) -> translate(world coordinate)
 

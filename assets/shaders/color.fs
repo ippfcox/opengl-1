@@ -2,9 +2,10 @@
 
 out vec4 FragColor;
 
-uniform vec3 unif_color;
+uniform vec4 unif_color;
+uniform float unif_opacity;
 
 void main()
 {
-    FragColor = vec4(unif_color, 1.0);
+    FragColor = vec4(unif_color.rgb, unif_color.a * unif_opacity);
 }

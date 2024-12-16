@@ -26,7 +26,7 @@ public:
     void SetAngleZ(float angle);
 
     void SetScale(glm::vec3 scale);
-    glm::mat4 GetModelMatrix();
+    glm::mat4 GetModelMatrix() const;
 
     ObjectType GetType() const;
 

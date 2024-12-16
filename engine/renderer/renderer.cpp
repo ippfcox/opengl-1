@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "renderer.hpp"
 #include "../object/material/phong_material.hpp"
 #include "../object/material/color_material.hpp"
@@ -53,7 +54,24 @@ void Renderer::Render(
     // clear
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    RenderObject(scene, camera, spot_light, directional_light, point_lights, ambient_light);
+    std::vector<Mesh *> opacity_objects{};
+    std::vector<Mesh *> transparent_objects{};
+    // push opacity objects and transparent objects
+    ProjectObjects(scene, opacity_objects, transparent_objects);
+    // sort transpraent objects, render from far to near
+    std::sort(
+        transparent_objects.begin(),
+        transparent_objects.end(),
+        [&](const Mesh *a, const Mesh *b) -> bool {
+            auto a_position_in_camera = camera->GetViewMatrix() * a->GetModelMatrix() * glm::vec4(0.0, 0.0, 0.0, 1.0);
+            auto b_position_in_camera = camera->GetViewMatrix() * b->GetModelMatrix() * glm::vec4(0.0, 0.0, 0.0, 1.0);
+            return a_position_in_camera.z < b_position_in_camera.z;
+        });
+
+    for (auto object : opacity_objects)
+        RenderObject(object, camera, spot_light, directional_light, point_lights, ambient_light);
+    for (auto object : transparent_objects)
+        RenderObject(object, camera, spot_light, directional_light, point_lights, ambient_light);
 }
 
 void Renderer::RenderObject(
@@ -126,6 +144,7 @@ void Renderer::RenderObject(
             auto material = dynamic_cast<ColorMaterial *>(mesh->material);
             //   color
             shader->SetUniform("unif_color", material->color);
+            shader->SetUniform("unif_opacity", material->opacity);
             //   mvp
             shader->SetUniform("unif_model", mesh->GetModelMatrix());
             shader->SetUniform("unif_view", camera->GetViewMatrix());
@@ -134,7 +153,6 @@ void Renderer::RenderObject(
         break;
         case MaterialType::Depth:
         {
-            auto material = dynamic_cast<DepthMaterial *>(mesh->material);
             shader->SetUniform("unif_near", camera->near_);
             shader->SetUniform("unif_far", camera->far_);
             shader->SetUniform("unif_model", mesh->GetModelMatrix());
@@ -155,13 +173,6 @@ void Renderer::RenderObject(
         // finish
         // GL_CALL(glBindVertexArray(GL_NONE));
         // shader->End();
-    }
-
-    int index = 0;
-    for (auto child : object->GetChildren())
-    {
-        RenderObject(child, camera, spot_light, directional_light, point_lights, ambient_light);
-        index++;
     }
 }
 
@@ -225,5 +236,22 @@ void Renderer::SetBlendState(Material *material)
     else
     {
         glDisable(GL_BLEND);
+    }
+}
+
+void Renderer::ProjectObjects(Object *object, std::vector<Mesh *> &opacity_objects, std::vector<Mesh *> &transparent_objects)
+{
+    if (object->GetType() == ObjectType::Mesh)
+    {
+        auto mesh = dynamic_cast<Mesh *>(object);
+        if (mesh->material->enable_blend)
+            transparent_objects.push_back(mesh);
+        else
+            opacity_objects.push_back(mesh);
+    }
+
+    for (auto child : object->GetChildren())
+    {
+        ProjectObjects(child, opacity_objects, transparent_objects);
     }
 }

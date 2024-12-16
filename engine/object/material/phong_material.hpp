@@ -7,7 +7,7 @@ public:
     PhongMaterial();
     ~PhongMaterial();
 
-    Texture *diffuse;
-    Texture *specular_mask;
-    float shiness;
+    Texture *diffuse{nullptr};
+    Texture *specular_mask{nullptr};
+    float shiness{1.0f};
 };

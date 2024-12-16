@@ -39,6 +39,7 @@ private:
     void SetPolygonOffsetState(Material *material);
     void SetStencilState(Material *material);
     void SetBlendState(Material *material);
+    void ProjectObjects(Object *object, std::vector<Mesh *> &opacity_objects, std::vector<Mesh *> &transparent_objects);
 
     std::unordered_map<MaterialType, Shader *> shader_map_;
     glm::vec3 clear_color_;

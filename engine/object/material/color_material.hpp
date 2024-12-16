@@ -4,7 +4,8 @@ class ColorMaterial : public Material
 {
 public:
     ColorMaterial();
+    ColorMaterial(glm::vec4 color);
     ~ColorMaterial();
 
-    glm::vec3 color;
+    glm::vec4 color;
 };
