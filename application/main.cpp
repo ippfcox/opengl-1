@@ -13,6 +13,7 @@
 #include "object/plane.hpp"
 #include "object/scene.hpp"
 #include "object/material/phong_material.hpp"
+#include "object/material/phong_opacity_mask_material.hpp"
 #include "object/material/color_material.hpp"
 #include "object/material/depth_material.hpp"
 #include "renderer/renderer.hpp"
@@ -44,32 +45,19 @@ void prepare()
     renderer = new Renderer();
 
     scene = new Scene();
-    auto nanosuit = AssimpLoader::Load("assets/fbx/nanosuit/nanosuit.obj");
-    nanosuit->SetScale(glm::vec3(0.1f));
 
-    auto geometry1 = new Plane(2, 2);
-    auto material1 = new ColorMaterial({1.0, 0.0, 1.0, 1.0});
-    material1->enable_blend = true;
-    material1->opacity = 0.8;
-    auto plane1 = new Mesh(geometry1, material1);
-    plane1->SetPosition({0.0f, 0.0f, 3.0f});
+    auto geometry = new Plane(2.0, 2.0);
+    auto material = new PhongOpacityMaskMaterial(); 
+    material->enable_blend = true;
+    material->diffuse = new Texture();
+    material->diffuse->InitByFilename("assets/textures/box.jpg");
+    material->diffuse->SetUnit(0);
+    material->opacity_mask = new Texture();
+    material->opacity_mask->InitByFilename("assets/textures/noise.jpg");
+    material->opacity_mask->SetUnit(1);
+    auto grass = new Mesh(geometry, material);
 
-    auto geometry2 = new Plane(2, 2);
-    auto material2 = new ColorMaterial({0.0, 1.0, 0.0, 1.0});
-    material2->enable_blend = true;
-    material2->opacity = 0.4;
-    auto plane2 = new Mesh(geometry2, material2);
-    plane2->SetPosition({0.0f, 0.0f, 5.0f});
-
-    auto geometry3 = new Plane(2, 2);
-    auto material3 = new ColorMaterial({0.0, 0.0, 0.0, 1.0});
-    auto plane3 = new Mesh(geometry3, material3);
-    plane3->SetPosition({0.0f, 0.0f, 7.0f});
-
-    scene->AddChild(nanosuit);
-    scene->AddChild(plane1);
-    scene->AddChild(plane2);
-    scene->AddChild(plane3);
+    scene->AddChild(grass);
 
     // light
     directional_light = new DirectionalLight();
