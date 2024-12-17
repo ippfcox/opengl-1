@@ -4,6 +4,7 @@
 #include "../object/material/phong_opacity_mask_material.hpp"
 #include "../object/material/color_material.hpp"
 #include "../object/material/depth_material.hpp"
+#include "../object/material/screen_plane_material.hpp"
 #include "../wrapper.hpp"
 
 Renderer::Renderer()
@@ -21,6 +22,9 @@ Renderer::Renderer()
     auto depth_shader = new Shader();
     depth_shader->InitByFilename("assets/shaders/depth.vs", "assets/shaders/depth.fs");
     shader_map_[MaterialType::Depth] = depth_shader;
+    auto screen_plane_shader = new Shader();
+    screen_plane_shader->InitByFilename("assets/shaders/screen_plane.vs", "assets/shaders/screen_plane.fs");
+    shader_map_[MaterialType::ScreenPlane] = screen_plane_shader;
 }
 
 Renderer::~Renderer()
@@ -212,6 +216,13 @@ void Renderer::RenderObject(
             shader->SetUniform("unif_model", mesh->GetModelMatrix());
             shader->SetUniform("unif_view", camera->GetViewMatrix());
             shader->SetUniform("unif_projection", camera->GetProjectionMatrix());
+        }
+        break;
+        case MaterialType::ScreenPlane:
+        {
+            auto material = dynamic_cast<ScreenPlaneMaterial *>(mesh->material);
+            material->screen->Bind();
+            shader->SetUniform("unif_screen_sampler", material->screen->GetUnit());
         }
         break;
         default:

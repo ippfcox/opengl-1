@@ -8,6 +8,7 @@ enum class MaterialType
     PhongOpacityMask,
     Color,
     Depth,
+    ScreenPlane,
 };
 
 class Material

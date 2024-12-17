@@ -11,11 +11,13 @@
 #include "object/sphere.hpp"
 #include "object/cube.hpp"
 #include "object/plane.hpp"
+#include "object/screen_plane.hpp"
 #include "object/scene.hpp"
 #include "object/material/phong_material.hpp"
 #include "object/material/phong_opacity_mask_material.hpp"
 #include "object/material/color_material.hpp"
 #include "object/material/depth_material.hpp"
+#include "object/material/screen_plane_material.hpp"
 #include "renderer/renderer.hpp"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -47,17 +49,25 @@ void prepare()
     scene = new Scene();
 
     auto geometry = new Plane(2.0, 2.0);
-    auto material = new PhongOpacityMaskMaterial(); 
+    auto material = new PhongOpacityMaskMaterial();
     material->enable_blend = true;
     material->diffuse = new Texture();
-    material->diffuse->InitByFilename("assets/textures/box.jpg");
+    material->diffuse->InitByFilename("assets/textures/box.png");
     material->diffuse->SetUnit(0);
     material->opacity_mask = new Texture();
     material->opacity_mask->InitByFilename("assets/textures/noise.jpg");
     material->opacity_mask->SetUnit(1);
     auto grass = new Mesh(geometry, material);
 
+    auto g2 = new ScreenPlane();
+    auto m2 = new ScreenPlaneMaterial();
+    m2->screen = new Texture();
+    m2->screen->InitByFilename("assets/textures/box.png");
+    m2->screen->SetUnit(0);
+    auto screen = new Mesh(g2, m2);
+
     scene->AddChild(grass);
+    scene->AddChild(screen);
 
     // light
     directional_light = new DirectionalLight();

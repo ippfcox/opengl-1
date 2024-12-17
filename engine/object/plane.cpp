@@ -11,8 +11,7 @@ Plane::Plane(float width, float height)
         {glm::vec3{-w2, +h2, 0}, glm::vec2{0.0f, 1.0f}, glm::vec3{0.0f, 0.0f, 1.0f}},
     };
 
-    std::vector<unsigned int> indices = {
-        0, 1, 2, 0, 2, 3};
+    std::vector<unsigned int> indices = {0, 1, 2, 0, 2, 3};
 
     SetupVertices(vertices, indices);
 }
