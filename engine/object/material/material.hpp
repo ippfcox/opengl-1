@@ -40,4 +40,8 @@ public:
     GLenum blend_src_factor{GL_SRC_ALPHA};
     GLenum blend_dst_factor{GL_ONE_MINUS_SRC_ALPHA};
     float opacity{1.0f};
+
+    bool enable_face_cull{false};
+    GLenum face_front{GL_CCW};
+    GLenum face_cull{GL_BACK};
 };

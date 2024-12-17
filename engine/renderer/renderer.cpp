@@ -54,6 +54,8 @@ void Renderer::Render(
     glStencilMask(0xFF);
     // default color blend
     glDisable(GL_BLEND);
+    // default face culling
+    glDisable(GL_CULL_FACE);
 
     // clear
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -93,6 +95,7 @@ void Renderer::RenderObject(
         SetPolygonOffsetState(mesh->material);
         SetStencilState(mesh->material);
         SetBlendState(mesh->material);
+        SetFaceCullingState(mesh->material);
 
         Shader *shader = shader_map_[mesh->material->type];
         if (!shader)
@@ -287,6 +290,20 @@ void Renderer::SetBlendState(Material *material)
     else
     {
         glDisable(GL_BLEND);
+    }
+}
+
+void Renderer::SetFaceCullingState(Material *material)
+{
+    if (material->enable_face_cull)
+    {
+        glEnable(GL_CULL_FACE);
+        glFrontFace(material->face_front);
+        glCullFace(material->face_cull);
+    }
+    else
+    {
+        glDisable(GL_CULL_FACE);
     }
 }
 
