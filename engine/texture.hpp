@@ -16,10 +16,12 @@ public:
     bool InitByFilename(const std::string &path);
     bool InitByMemoryImage(const void *image_data, int size);
     bool InitByMemoryRGBA(const void *rgba_data, int width, int height);
+    bool InitBySize(unsigned int width, unsigned int height);
 
     void SetUnit(int texture_unit);
-    int GetUnit();
+    int GetUnit() const;
     void Bind();
+    GLuint GetTexture() const;
 
 private:
     GLuint texture_{0};

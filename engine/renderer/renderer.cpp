@@ -43,8 +43,10 @@ void Renderer::Render(
     SpotLight *spot_light,
     DirectionalLight *directional_light,
     const std::vector<PointLight *> point_lights,
-    AmbientLight *ambient_light)
+    AmbientLight *ambient_light,
+    GLuint fbo)
 {
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     // default depth test
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);

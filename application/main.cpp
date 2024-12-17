@@ -28,8 +28,12 @@ constexpr int width = 800;
 constexpr int height = 600;
 constexpr char title[] = "hy";
 
+GLuint fbo;
+Texture *color_attachment = nullptr;
+
 Renderer *renderer = nullptr;
-Scene *scene = nullptr;
+Scene *scene_offscreen = nullptr;
+Scene *scene_inscreen = nullptr;
 DirectionalLight *directional_light = nullptr;
 std::vector<PointLight *> point_lights{};
 AmbientLight *ambient_light = nullptr;
@@ -42,12 +46,11 @@ glm::vec3 clear_color{0.0f};
 
 void prepare()
 {
-
     // renderer
     renderer = new Renderer();
 
-    scene = new Scene();
-
+    // off screen
+    scene_offscreen = new Scene();
     auto geometry = new Plane(2.0, 2.0);
     auto material = new PhongOpacityMaskMaterial();
     material->enable_blend = true;
@@ -58,16 +61,16 @@ void prepare()
     material->opacity_mask->InitByFilename("assets/textures/noise.jpg");
     material->opacity_mask->SetUnit(1);
     auto grass = new Mesh(geometry, material);
+    scene_offscreen->AddChild(grass);
 
+    // in screen
+    scene_inscreen = new Scene();
     auto g2 = new ScreenPlane();
     auto m2 = new ScreenPlaneMaterial();
-    m2->screen = new Texture();
-    m2->screen->InitByFilename("assets/textures/box.png");
+    m2->screen = color_attachment;
     m2->screen->SetUnit(0);
     auto screen = new Mesh(g2, m2);
-
-    scene->AddChild(grass);
-    scene->AddChild(screen);
+    scene_inscreen->AddChild(screen);
 
     // light
     directional_light = new DirectionalLight();
@@ -128,6 +131,32 @@ void prepare_camera()
     dynamic_cast<GameCameraControl *>(camera_control)->SetMoveSpeed(0.02f);
 }
 
+void prepare_fbo()
+{
+    GL_CALL(glGenFramebuffers(1, &fbo));
+    GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, fbo));
+
+    color_attachment = new Texture();
+    color_attachment->InitBySize(width, height);
+    GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color_attachment->GetTexture(), 0));
+
+    GLuint depth_stencil_o;
+    GL_CALL(glGenTextures(1, &depth_stencil_o));
+    GL_CALL(glBindTexture(GL_TEXTURE_2D, depth_stencil_o));
+    GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr));
+    GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depth_stencil_o, 0));
+    GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+    GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+    GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depth_stencil_o, 0));
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
+        SPDLOG_ERROR("framebuffer is not complate");
+    }
+
+    GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE));
+}
+
 void init_imgui(Application *app)
 {
     ImGui::CreateContext();
@@ -178,6 +207,7 @@ int main()
         camera_control->OnMouseCursor(xpos, ypos);
     });
 
+    prepare_fbo();
     prepare();
     prepare_camera();
     init_imgui(app);
@@ -192,7 +222,8 @@ int main()
 
         camera_control->Update();
         renderer->SetClearColor(clear_color);
-        renderer->Render(scene, camera, spot_light, directional_light, point_lights, ambient_light);
+        renderer->Render(scene_offscreen, camera, spot_light, directional_light, point_lights, ambient_light, fbo);
+        renderer->Render(scene_inscreen, camera, spot_light, directional_light, point_lights, ambient_light);
         render_imgui(app);
     }
 

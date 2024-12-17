@@ -25,7 +25,8 @@ public:
         SpotLight *spot_light,
         DirectionalLight *directional_light,
         const std::vector<PointLight *> point_lights,
-        AmbientLight *ambient_light);
+        AmbientLight *ambient_light,
+        GLuint fbo = 0);
 
 private:
     void RenderObject(
