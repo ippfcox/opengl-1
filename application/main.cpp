@@ -66,7 +66,7 @@ void prepare()
     // in screen
     scene_inscreen = new Scene();
     auto g2 = new ScreenPlane();
-    auto m2 = new ScreenPlaneMaterial();
+    auto m2 = new ScreenPlaneMaterial(width, height);
     m2->screen = fb->GetColorAttachment();
     m2->screen->SetUnit(0);
     auto screen = new Mesh(g2, m2);

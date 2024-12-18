@@ -225,6 +225,8 @@ void Renderer::RenderObject(
             auto material = dynamic_cast<ScreenPlaneMaterial *>(mesh->material);
             material->screen->Bind();
             shader->SetUniform("unif_screen_sampler", material->screen->GetUnit());
+            shader->SetUniform("unif_screen_width", material->screen_width_);
+            shader->SetUniform("unif_screen_height", material->screen_height_);
         }
         break;
         default:
