@@ -7,6 +7,7 @@ aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/object" SRC)
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/object/material" SRC)
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/light" SRC)
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/renderer" SRC)
+aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/framebuffer" SRC)
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/utils" SRC)
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/glad/src" SRC)
 

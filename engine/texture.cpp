@@ -98,7 +98,7 @@ bool Texture::InitByMemoryRGBA(const void *rgba_data, int width, int height)
     return true;
 }
 
-bool Texture::InitBySize(unsigned int width, unsigned int height)
+bool Texture::InitColorAttachment(unsigned int width, unsigned int height)
 {
     width_ = width;
     height_ = height;
@@ -108,6 +108,20 @@ bool Texture::InitBySize(unsigned int width, unsigned int height)
     GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width_, height_, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr));
     GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
     GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+
+    return true;
+}
+
+bool Texture::InitDepthStencilAttachment(unsigned int width, unsigned int height)
+{
+    width_ = width;
+    height_ = height;
+
+    GL_CALL(glGenTextures(1, &texture_));
+    GL_CALL(glBindTexture(GL_TEXTURE_2D, texture_));
+    GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width_, height_, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr));
+    GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+    GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
 
     return true;
 }
@@ -128,6 +142,7 @@ void Texture::Bind()
     GL_CALL(glBindTexture(GL_TEXTURE_2D, texture_));
 }
 
-GLuint Texture::GetTexture() const {
+GLuint Texture::GetTexture() const
+{
     return texture_;
 }

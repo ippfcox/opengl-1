@@ -16,7 +16,8 @@ public:
     bool InitByFilename(const std::string &path);
     bool InitByMemoryImage(const void *image_data, int size);
     bool InitByMemoryRGBA(const void *rgba_data, int width, int height);
-    bool InitBySize(unsigned int width, unsigned int height);
+    bool InitColorAttachment(unsigned int width, unsigned int height);
+    bool InitDepthStencilAttachment(unsigned int width, unsigned int height);
 
     void SetUnit(int texture_unit);
     int GetUnit() const;

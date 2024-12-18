@@ -19,6 +19,7 @@
 #include "object/material/depth_material.hpp"
 #include "object/material/screen_plane_material.hpp"
 #include "renderer/renderer.hpp"
+#include "framebuffer/framebuffer.hpp"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -28,9 +29,7 @@ constexpr int width = 800;
 constexpr int height = 600;
 constexpr char title[] = "hy";
 
-GLuint fbo;
-Texture *color_attachment = nullptr;
-
+Framebuffer *fb = nullptr;
 Renderer *renderer = nullptr;
 Scene *scene_offscreen = nullptr;
 Scene *scene_inscreen = nullptr;
@@ -48,6 +47,7 @@ void prepare()
 {
     // renderer
     renderer = new Renderer();
+    fb = new Framebuffer(width, height);
 
     // off screen
     scene_offscreen = new Scene();
@@ -67,7 +67,7 @@ void prepare()
     scene_inscreen = new Scene();
     auto g2 = new ScreenPlane();
     auto m2 = new ScreenPlaneMaterial();
-    m2->screen = color_attachment;
+    m2->screen = fb->GetColorAttachment();
     m2->screen->SetUnit(0);
     auto screen = new Mesh(g2, m2);
     scene_inscreen->AddChild(screen);
@@ -131,32 +131,6 @@ void prepare_camera()
     dynamic_cast<GameCameraControl *>(camera_control)->SetMoveSpeed(0.02f);
 }
 
-void prepare_fbo()
-{
-    GL_CALL(glGenFramebuffers(1, &fbo));
-    GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, fbo));
-
-    color_attachment = new Texture();
-    color_attachment->InitBySize(width, height);
-    GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color_attachment->GetTexture(), 0));
-
-    GLuint depth_stencil_o;
-    GL_CALL(glGenTextures(1, &depth_stencil_o));
-    GL_CALL(glBindTexture(GL_TEXTURE_2D, depth_stencil_o));
-    GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr));
-    GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depth_stencil_o, 0));
-    GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-    GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
-    GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depth_stencil_o, 0));
-
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-    {
-        SPDLOG_ERROR("framebuffer is not complate");
-    }
-
-    GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE));
-}
-
 void init_imgui(Application *app)
 {
     ImGui::CreateContext();
@@ -207,7 +181,6 @@ int main()
         camera_control->OnMouseCursor(xpos, ypos);
     });
 
-    prepare_fbo();
     prepare();
     prepare_camera();
     init_imgui(app);
@@ -222,7 +195,7 @@ int main()
 
         camera_control->Update();
         renderer->SetClearColor(clear_color);
-        renderer->Render(scene_offscreen, camera, spot_light, directional_light, point_lights, ambient_light, fbo);
+        renderer->Render(scene_offscreen, camera, spot_light, directional_light, point_lights, ambient_light, fb->GetFramebuffer());
         renderer->Render(scene_inscreen, camera, spot_light, directional_light, point_lights, ambient_light);
         render_imgui(app);
     }

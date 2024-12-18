@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <exception>
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #define GLM_ENABLE_EXPERIMENTAL
