@@ -18,6 +18,7 @@
 #include "object/material/color_material.hpp"
 #include "object/material/depth_material.hpp"
 #include "object/material/screen_plane_material.hpp"
+#include "object/material/cube_material.hpp"
 #include "renderer/renderer.hpp"
 #include "framebuffer/framebuffer.hpp"
 #include "imgui.h"
@@ -51,17 +52,19 @@ void prepare()
 
     // off screen
     scene_offscreen = new Scene();
-    auto geometry = new Plane(2.0, 2.0);
-    auto material = new PhongOpacityMaskMaterial();
-    material->enable_blend = true;
+    auto geometry = new Cube(2.0);
+    auto material = new CubeMaterial();
     material->diffuse = new Texture();
-    material->diffuse->InitByFilename("assets/textures/box.png");
-    material->diffuse->SetUnit(0);
-    material->opacity_mask = new Texture();
-    material->opacity_mask->InitByFilename("assets/textures/noise.jpg");
-    material->opacity_mask->SetUnit(1);
-    auto grass = new Mesh(geometry, material);
-    scene_offscreen->AddChild(grass);
+    material->diffuse->InitCubeMapByFilename({
+        "assets/textures/skybox/right.jpg",
+        "assets/textures/skybox/left.jpg",
+        "assets/textures/skybox/top.jpg",
+        "assets/textures/skybox/bottom.jpg",
+        "assets/textures/skybox/back.jpg",
+        "assets/textures/skybox/front.jpg",
+    });
+    auto cube = new Mesh(geometry, material);
+    scene_offscreen->AddChild(cube);
 
     // in screen
     scene_inscreen = new Scene();

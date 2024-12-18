@@ -5,6 +5,7 @@
 #include "../object/material/color_material.hpp"
 #include "../object/material/depth_material.hpp"
 #include "../object/material/screen_plane_material.hpp"
+#include "../object/material/cube_material.hpp"
 #include "../wrapper.hpp"
 
 Renderer::Renderer()
@@ -25,6 +26,9 @@ Renderer::Renderer()
     auto screen_plane_shader = new Shader();
     screen_plane_shader->InitByFilename("assets/shaders/screen_plane.vs", "assets/shaders/screen_plane.fs");
     shader_map_[MaterialType::ScreenPlane] = screen_plane_shader;
+    auto cube_shader = new Shader();
+    cube_shader->InitByFilename("assets/shaders/cube.vs", "assets/shaders/cube.fs");
+    shader_map_[MaterialType::Cube] = cube_shader;
 }
 
 Renderer::~Renderer()
@@ -227,6 +231,17 @@ void Renderer::RenderObject(
             shader->SetUniform("unif_screen_sampler", material->screen->GetUnit());
             shader->SetUniform("unif_screen_width", material->screen_width_);
             shader->SetUniform("unif_screen_height", material->screen_height_);
+        }
+        break;
+        case MaterialType::Cube:
+        {
+            auto material = dynamic_cast<CubeMaterial *>(mesh->material);
+            mesh->SetPosition(camera->position);
+            material->diffuse->Bind();
+            shader->SetUniform("unif_model", mesh->GetModelMatrix());
+            shader->SetUniform("unif_view", camera->GetViewMatrix());
+            shader->SetUniform("unif_projection", camera->GetProjectionMatrix());
+            shader->SetUniform("unif_sampler", material->diffuse->GetUnit());
         }
         break;
         default:

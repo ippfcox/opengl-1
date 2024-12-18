@@ -69,6 +69,36 @@ bool Texture::InitByFilename(const std::string &path)
     return true;
 }
 
+bool Texture::InitCubeMapByFilename(const std::vector<std::string> &paths)
+{
+    texture_target_ = GL_TEXTURE_CUBE_MAP;
+
+    GL_CALL(glGenTextures(1, &texture_));
+    GL_CALL(glBindTexture(GL_TEXTURE_CUBE_MAP, texture_));
+    stbi_set_flip_vertically_on_load(1);
+
+    for (int i = 0; i < paths.size(); ++i)
+    {
+        int channels, width, height;
+        stbi_uc *data = stbi_load(paths[i].c_str(), &width, &height, &channels, STBI_rgb_alpha);
+        if (!data)
+        {
+            SPDLOG_ERROR("stbi_load {} failed: {}", paths[i], stbi_failure_reason());
+            continue;
+        }
+
+        GL_CALL(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data));
+
+        stbi_image_free(data);
+    }
+    GL_CALL(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+    GL_CALL(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+    GL_CALL(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_REPEAT));
+    GL_CALL(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_REPEAT));
+
+    return true;
+}
+
 bool Texture::InitByMemoryImage(const void *image_data, int size)
 {
     stbi_set_flip_vertically_on_load(1);
@@ -139,7 +169,7 @@ int Texture::GetUnit() const
 void Texture::Bind()
 {
     GL_CALL(glActiveTexture(GL_TEXTURE0 + texture_unit_));
-    GL_CALL(glBindTexture(GL_TEXTURE_2D, texture_));
+    GL_CALL(glBindTexture(texture_target_, texture_));
 }
 
 GLuint Texture::GetTexture() const

@@ -9,6 +9,7 @@ enum class MaterialType
     Color,
     Depth,
     ScreenPlane,
+    Cube,
 };
 
 class Material
