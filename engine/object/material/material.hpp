@@ -6,6 +6,7 @@ enum class MaterialType
 {
     Phong,
     PhongOpacityMask,
+    PhongEnv,
     Color,
     Depth,
     ScreenPlane,

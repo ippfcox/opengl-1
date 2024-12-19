@@ -15,6 +15,7 @@
 #include "object/scene.hpp"
 #include "object/material/phong_material.hpp"
 #include "object/material/phong_opacity_mask_material.hpp"
+#include "object/material/phong_env_material.hpp"
 #include "object/material/color_material.hpp"
 #include "object/material/depth_material.hpp"
 #include "object/material/screen_plane_material.hpp"
@@ -53,14 +54,6 @@ void prepare()
     // off screen
     scene_offscreen = new Scene();
 
-    auto sphere_geometry = new Sphere(4.0f);
-    auto sphere_material = new PhongMaterial();
-    sphere_material->diffuse = new Texture();
-    sphere_material->diffuse->InitByFilename("assets/textures/earthmap1k.jpg");
-    sphere_material->shiness = 4.0f;
-    auto sphere_mesh = new Mesh(sphere_geometry, sphere_material);
-    scene_offscreen->AddChild(sphere_mesh);
-
     auto skybox_geometry = new Cube(1.0);
     auto skybox_material = new CubeMaterial();
     skybox_material->diffuse = new Texture();
@@ -75,6 +68,17 @@ void prepare()
     skybox_material->enable_depth_write = false;
     auto skybox_mesh = new Mesh(skybox_geometry, skybox_material);
     scene_offscreen->AddChild(skybox_mesh);
+
+    auto sphere_geometry = new Sphere(4.0f);
+    auto sphere_material = new PhongEnvMaterial();
+    sphere_material->diffuse = new Texture();
+    sphere_material->diffuse->InitByFilename("assets/textures/earthmap1k.jpg");
+    sphere_material->diffuse->SetUnit(0);
+    sphere_material->env = skybox_material->diffuse;
+    sphere_material->env->SetUnit(1);
+    sphere_material->shiness = 4.0f;
+    auto sphere_mesh = new Mesh(sphere_geometry, sphere_material);
+    scene_offscreen->AddChild(sphere_mesh);
 
     // auto geometry = new Plane(5, 5);
     // auto material = new PhongMaterial();

@@ -2,6 +2,7 @@
 #include "renderer.hpp"
 #include "../object/material/phong_material.hpp"
 #include "../object/material/phong_opacity_mask_material.hpp"
+#include "../object/material/phong_env_material.hpp"
 #include "../object/material/color_material.hpp"
 #include "../object/material/depth_material.hpp"
 #include "../object/material/screen_plane_material.hpp"
@@ -17,6 +18,9 @@ Renderer::Renderer()
     auto phong_opacity_mask_shader = new Shader();
     phong_opacity_mask_shader->InitByFilename("assets/shaders/phong_opacity_mask.vs", "assets/shaders/phong_opacity_mask.fs");
     shader_map_[MaterialType::PhongOpacityMask] = phong_opacity_mask_shader;
+    auto phong_env_shader = new Shader();
+    phong_env_shader->InitByFilename("assets/shaders/phong_env.vs", "assets/shaders/phong_env.fs");
+    shader_map_[MaterialType::PhongEnv] = phong_env_shader;
     auto color_shader = new Shader();
     color_shader->InitByFilename("assets/shaders/color.vs", "assets/shaders/color.fs");
     shader_map_[MaterialType::Color] = color_shader;
@@ -170,6 +174,49 @@ void Renderer::RenderObject(
             shader->SetUniform("unif_diffuse_sampler", material->diffuse->GetUnit()); // bind texture sampler to texture unit
             material->opacity_mask->Bind();
             shader->SetUniform("unif_opacity_mask_sampler", material->opacity_mask->GetUnit());
+            //   mvp
+            shader->SetUniform("unif_model", mesh->GetModelMatrix());
+            shader->SetUniform("unif_view", camera->GetViewMatrix());
+            shader->SetUniform("unif_projection", camera->GetProjectionMatrix());
+            auto normal_matrix = glm::mat3(glm::transpose(glm::inverse(mesh->GetModelMatrix())));
+            shader->SetUniform("unif_normal_matrix", normal_matrix);
+            //   light
+            shader->SetUniform("unif_spot_light.color", spot_light->color);
+            shader->SetUniform("unif_spot_light.specular_intensity", spot_light->specular_intensity);
+            shader->SetUniform("unif_spot_light.position", spot_light->GetPosition());
+            shader->SetUniform("unif_spot_light.direction", spot_light->direction);
+            shader->SetUniform("unif_spot_light.inner_cone", glm::cos(glm::radians(spot_light->inner_angle)));
+            shader->SetUniform("unif_spot_light.outer_cone", glm::cos(glm::radians(spot_light->outer_angle)));
+            for (int i = 0; i < point_lights.size(); ++i)
+            {
+                std::string name = "unif_point_lights[" + std::to_string(i) + "].";
+                shader->SetUniform(name + "color", point_lights[i]->color);
+                shader->SetUniform(name + "specular_intensity", point_lights[i]->specular_intensity);
+                shader->SetUniform(name + "position", point_lights[i]->GetPosition());
+                shader->SetUniform(name + "k2", point_lights[i]->k2);
+                shader->SetUniform(name + "k1", point_lights[i]->k1);
+                shader->SetUniform(name + "kc", point_lights[i]->kc);
+            }
+            shader->SetUniform("unif_directional_light.color", directional_light->color);
+            shader->SetUniform("unif_directional_light.specular_intensity", directional_light->specular_intensity);
+            shader->SetUniform("unif_directional_light.direction", directional_light->direction);
+            shader->SetUniform("unif_specular_shiness", material->shiness);
+            shader->SetUniform("unif_opacity", material->opacity);
+            shader->SetUniform("unif_ambient_color", ambient_light->color);
+            //   camera
+            shader->SetUniform("unif_camera_position", camera->position);
+        }
+        break;
+        case MaterialType::PhongEnv:
+        {
+            auto material = dynamic_cast<PhongEnvMaterial *>(mesh->material);
+
+            //   texture
+            material->diffuse->Bind();                                                // bind texture to texture unit
+            shader->SetUniform("unif_diffuse_sampler", material->diffuse->GetUnit()); // bind texture sampler to texture unit
+            shader->SetUniform("unif_env_sampler", material->env->GetUnit());
+            // material->specular_mask->Bind(1);
+            // shader->SetUniform("unif_specular_mask_sampler", 1);
             //   mvp
             shader->SetUniform("unif_model", mesh->GetModelMatrix());
             shader->SetUniform("unif_view", camera->GetViewMatrix());
