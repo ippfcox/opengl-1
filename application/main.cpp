@@ -52,7 +52,11 @@ void prepare()
 
     // off screen
     scene_offscreen = new Scene();
-    auto geometry = new Cube(2.0);
+    auto geometry = new Cube(1.0);
+    // auto material = new PhongMaterial();
+    // material->diffuse = new Texture();
+    // material->diffuse->InitByFilename("assets/textures/earthmap1k.jpg");
+    // material->shiness = 32.0f;
     auto material = new CubeMaterial();
     material->diffuse = new Texture();
     material->diffuse->InitCubeMapByFilename({
@@ -65,6 +69,13 @@ void prepare()
     });
     auto cube = new Mesh(geometry, material);
     scene_offscreen->AddChild(cube);
+
+    // auto geometry = new Plane(5, 5);
+    // auto material = new PhongMaterial();
+    // material->diffuse = new Texture();
+    // material->diffuse->InitByFilename("assets/textures/earthmap1k.jpg");
+    // auto plane = new Mesh(geometry, material);
+    // scene_offscreen->AddChild(plane);
 
     // in screen
     scene_inscreen = new Scene();
