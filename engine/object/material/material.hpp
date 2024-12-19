@@ -21,7 +21,7 @@ public:
     MaterialType type;
 
     bool enable_depth_test{true};
-    GLenum depth_func{GL_LESS};
+    GLenum depth_func{GL_LEQUAL};
     bool enable_depth_write{true};
 
     bool enable_polygon_offset{false};

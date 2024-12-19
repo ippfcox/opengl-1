@@ -38,5 +38,6 @@ void main()
 {
     vec4 origin_color = texture(unif_screen_sampler, frag_uv);
     
-    FragColor = vec4(blur(), origin_color.a);
+    // FragColor = vec4(blur(), origin_color.a);
+    FragColor = origin_color;
 }

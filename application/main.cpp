@@ -26,8 +26,8 @@
 #include "imgui_impl_opengl3.h"
 #include "wrapper.hpp"
 
-constexpr int width = 800;
-constexpr int height = 600;
+constexpr int width = 1600;
+constexpr int height = 900;
 constexpr char title[] = "hy";
 
 Framebuffer *fb = nullptr;
@@ -52,23 +52,29 @@ void prepare()
 
     // off screen
     scene_offscreen = new Scene();
-    auto geometry = new Cube(1.0);
-    // auto material = new PhongMaterial();
-    // material->diffuse = new Texture();
-    // material->diffuse->InitByFilename("assets/textures/earthmap1k.jpg");
-    // material->shiness = 32.0f;
-    auto material = new CubeMaterial();
-    material->diffuse = new Texture();
-    material->diffuse->InitCubeMapByFilename({
+
+    auto sphere_geometry = new Sphere(4.0f);
+    auto sphere_material = new PhongMaterial();
+    sphere_material->diffuse = new Texture();
+    sphere_material->diffuse->InitByFilename("assets/textures/earthmap1k.jpg");
+    sphere_material->shiness = 4.0f;
+    auto sphere_mesh = new Mesh(sphere_geometry, sphere_material);
+    scene_offscreen->AddChild(sphere_mesh);
+
+    auto skybox_geometry = new Cube(1.0);
+    auto skybox_material = new CubeMaterial();
+    skybox_material->diffuse = new Texture();
+    skybox_material->diffuse->InitCubeMapByFilename({
         "assets/textures/skybox/right.jpg",
         "assets/textures/skybox/left.jpg",
         "assets/textures/skybox/top.jpg",
         "assets/textures/skybox/bottom.jpg",
+        "assets/textures/skybox/front.jpg", // [fixme] maybe not correct...
         "assets/textures/skybox/back.jpg",
-        "assets/textures/skybox/front.jpg",
     });
-    auto cube = new Mesh(geometry, material);
-    scene_offscreen->AddChild(cube);
+    skybox_material->enable_depth_write = false;
+    auto skybox_mesh = new Mesh(skybox_geometry, skybox_material);
+    scene_offscreen->AddChild(skybox_mesh);
 
     // auto geometry = new Plane(5, 5);
     // auto material = new PhongMaterial();

@@ -75,7 +75,7 @@ bool Texture::InitCubeMapByFilename(const std::vector<std::string> &paths)
 
     GL_CALL(glGenTextures(1, &texture_));
     GL_CALL(glBindTexture(GL_TEXTURE_CUBE_MAP, texture_));
-    stbi_set_flip_vertically_on_load(1);
+    stbi_set_flip_vertically_on_load(0);
 
     for (int i = 0; i < paths.size(); ++i)
     {
