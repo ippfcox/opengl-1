@@ -57,25 +57,23 @@ void prepare()
     auto skybox_geometry = new Cube(1.0);
     auto skybox_material = new CubeMaterial();
     skybox_material->diffuse = new Texture();
-    skybox_material->diffuse->InitCubeMapByFilename({
-        "assets/textures/skybox/right.jpg",
-        "assets/textures/skybox/left.jpg",
-        "assets/textures/skybox/top.jpg",
-        "assets/textures/skybox/bottom.jpg",
-        "assets/textures/skybox/front.jpg", // [fixme] maybe not correct...
-        "assets/textures/skybox/back.jpg",
-    });
-    skybox_material->enable_depth_write = false;
+    skybox_material->diffuse->InitByFilename("assets/textures/8081_earthmap10k.jpg");
+    // skybox_material->diffuse->InitCubeMapByFilename({
+    //     "assets/textures/skybox/right.jpg",
+    //     "assets/textures/skybox/left.jpg",
+    //     "assets/textures/skybox/top.jpg",
+    //     "assets/textures/skybox/bottom.jpg",
+    //     "assets/textures/skybox/front.jpg", // [fixme] maybe not correct...
+    //     "assets/textures/skybox/back.jpg",
+    // });
     auto skybox_mesh = new Mesh(skybox_geometry, skybox_material);
     scene_offscreen->AddChild(skybox_mesh);
 
     auto sphere_geometry = new Sphere(4.0f);
-    auto sphere_material = new PhongEnvMaterial();
+    auto sphere_material = new PhongMaterial();
     sphere_material->diffuse = new Texture();
     sphere_material->diffuse->InitByFilename("assets/textures/earthmap1k.jpg");
     sphere_material->diffuse->SetUnit(0);
-    sphere_material->env = skybox_material->diffuse;
-    sphere_material->env->SetUnit(1);
     sphere_material->shiness = 4.0f;
     auto sphere_mesh = new Mesh(sphere_geometry, sphere_material);
     scene_offscreen->AddChild(sphere_mesh);
